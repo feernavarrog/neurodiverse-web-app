@@ -1,0 +1,119 @@
+.main-item {
+    width: 60%;
+    padding: 30px;
+    background: rgb(255, 255, 255);
+    display: flex;
+    justify-content: center; 
+    flex-direction: column;  
+    align-items: center; 
+    box-sizing: border-box; 
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    margin: 60px auto;
+    margin-bottom: 400px;
+    margin-top: 100px;
+}
+
+/* Estilos del contenedor del item */
+.item-container {
+    max-width: 1000px;
+    display: flex;
+    justify-content: space-between; 
+    gap: 30px;  
+    width: 100%;
+    flex-wrap: wrap;  
+    align-items: flex-start;  
+    margin-top: -20px;
+    
+}
+/* Estilo para la imagen del item */
+.item-image {
+    width: 50%;  
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover; 
+    flex-wrap: wrap;  
+    align-items: flex-start; 
+    margin-top: -50px;
+    
+}
+
+/* Contenedor de los detalles del producto */
+.details-container {
+    width: 40%; 
+    display: flex;
+    flex-direction: column;  
+    justify-content: flex-start;  
+    gap: 15px;  
+    align-items: flex-start;  
+    margin-left: 20px;  
+    flex-wrap: wrap;  
+    
+}
+
+/* Estilo para el nombre del item */
+.item-name {
+    font-size: 1.5rem;
+    color: #333;
+    text-align: left;
+    margin-top: 100px; 
+    flex-wrap: wrap; 
+    align-items: flex-start; 
+}
+
+/* Estilo para los párrafos de información del item */
+.item-info {
+    font-size: 1rem;
+    color: #666;
+    text-align: left;  
+    margin-top: 10px;  
+    width: 80%;  
+    max-width: 800px;  
+    margin-left: 100px;  
+    margin-right: auto;  
+    flex-wrap: wrap;  
+    align-items: flex-start; 
+}
+
+/* Estilo para el botón de agregar al carrito */
+.add-to-cart-btn {
+    background-color: #ecc3c9;
+    color: rgb(0, 0, 0);
+    font-size: 1.1rem;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;  
+    flex-wrap: wrap;  
+    align-items: flex-start; 
+}
+
+.add-to-cart-btn:hover {
+    background-color: #bacfe5;
+}
+
+.add-to-cart-btn:active {
+    background-color: #1e7e34;
+}
+
+/* Estilo para la descripción (debajo de la imagen) */
+.item-description {
+    font-size: 1rem;
+    color: #666;
+    text-align: left;  
+    margin-top: 20px; 
+    width: 80%;  
+    max-width: 800px; 
+    margin-left: 100px;  
+    margin-right: auto;  
+    flex-wrap: wrap;  
+    align-items: flex-start; 
+}
+
+.disabled-button {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+

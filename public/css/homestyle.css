@@ -1,0 +1,54 @@
+/* Estilos generales para el body */
+html, body {
+    height: 100%; 
+    margin: 0;    
+    padding: 0;   
+    border: none; 
+    background-size: cover; 
+    background-position: center; 
+    background-color: #ffffff;
+}
+
+
+
+/* Contenedor para los banners */
+.banner-container {
+    display: flex;               
+    justify-content: center;     
+    align-items: center;         
+    gap: 20px;                   
+    flex-wrap: wrap;             
+    width: 90%;                  
+    margin: -250px auto 0;       
+}
+
+/* Estilo para los enlaces (manteniendo las imágenes dentro) */
+.banner-link {
+    display: inline-block;       
+    text-decoration: none;       
+    overflow: hidden;            
+}
+
+/* Estilo para las imágenes dentro del enlace */
+.banner-image {
+    max-width: 100%;             
+    height: auto;                
+    object-fit: contain;         
+    display: block;   
+    margin-top: -40px;          
+}
+
+
+.image-center {
+    display: flex; 
+    justify-content: center;
+    align-items: center; 
+    height: 100vh; 
+    margin-top: -205px;
+    margin-bottom: 300px;
+}
+
+.image-center img {
+    width: 1600px;  
+    height: auto;  
+}
