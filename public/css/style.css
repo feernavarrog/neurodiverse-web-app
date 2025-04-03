@@ -7,8 +7,9 @@ html, body {
     width: 100%; 
     overflow-x: hidden; 
     flex-wrap: wrap;
-    
+    background-color: #fbf8f2 !important; 
 }
+
 
 /* Contenedores principales de la página */
 * {
@@ -26,6 +27,7 @@ body, .main-products, .product-list, .product-item, .item-container, .details-co
 /* Asegura que los elementos no tengan desbordamiento */
 html, body, .main-products {
     overflow-x: hidden;
+    
 }
 
 
@@ -34,7 +36,7 @@ html, body, .main-products {
 
 /*----------------------------NAV--------------------*/
 .logo {
-    max-height: 50px; /* Ajusta el tamaño del logo */
+    max-height: 50px; 
     margin-right: 1200px;
 }
 
@@ -54,7 +56,7 @@ html, body, .main-products {
 /* Barra de navegación */
 .navbar {
     padding: 1px;
-    background-image: linear-gradient(to right, #fc899a, #ecc3c9);
+    background-image: linear-gradient(to right, #A7C7E7, #b8d2ec);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -64,10 +66,14 @@ html, body, .main-products {
     
 }
 
-.image-center {
-    margin-top: 210px;
-    flex-wrap: wrap;
+.image-center img {
+    width: 10%; 
+    height: auto; 
+    max-width: 50%; 
+  
+    
 }
+
 
 /* Contenedor para el logo y el menú */
 nav > a {
@@ -289,7 +295,7 @@ section {
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 20px;
-    margin-top: 60px; /* Mover el título hacia abajo */
+    margin-top: 60px; 
 }
 
 /* Asegurarse de que el contenedor del título también tenga espacio adecuado */
@@ -298,7 +304,7 @@ section {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    padding-top: 30px; /* Asegura que haya espacio en la parte superior */
+    padding-top: 30px; 
 }
 
 /* Estilo para los enlaces de las categorías */
@@ -312,27 +318,27 @@ section {
     width: 100%;
     text-align: left;
     transition: color 0.3s ease, background-color 0.3s ease;
-    border-radius: 12px; /* Bordes más suaves */
+    border-radius: 12px; 
     margin: 5px 0;
     font-family: 'Verdana', sans-serif;
 }
 
 /* Estilo de los iconos */
 .sidebar-link i {
-    margin-right: 10px; /* Espacio entre el icono y el texto */
-    font-size: 20px; /* Tamaño del icono */
+    margin-right: 10px; 
+    font-size: 20px; 
 }
 
 /* Efecto hover en los enlaces */
 .sidebar-link:hover {
-    color: #afe2a3; /* Color pastel brillante */
+    color: #afe2a3; 
     background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Estilo para las categorías especiales */
 .upcoming-category {
     font-weight: bold;
-    color: #f0b0b9; /* Rosa brillante */
+    color: #f0b0b9;
 }
 
 .discount-category {
@@ -357,7 +363,7 @@ section {
 /* --------------CART--------------- */
 #cart {
     position: fixed;
-    right: -400px; /* Oculto por defecto */
+    right: -400px; 
     top: 0;
     width: 350px;
     height: 100%;
@@ -374,7 +380,7 @@ section {
 
 /* Mostrar el carrito */
 #cart.show-cart {
-    right: 0; /* Desliza el carrito hacia dentro */
+    right: 0; 
 }
 
 /* Mostrar el overlay */
@@ -625,16 +631,16 @@ section {
 
 /* Barra con texto desplazándose */
 .custom-moving-navbar {
-    background-color: #ffe97a;  
+    background-color: #FFF4B1;  
     padding: 8px 0;            /* Mantiene el espacio interno */
     position: relative;
     overflow: hidden;  
-    width: 100vw;              /* Usa el 100% del ancho de la ventana */
-    left: 0;                   /* Asegúrate de que comience desde el borde izquierdo */
-    box-sizing: border-box;    /* Incluye el padding en el cálculo del ancho */
-    margin: 0;                 /* Elimina cualquier margen exterior */
-    border-top: none;          /* Asegura que no haya un borde superior */
-    top: 0;                    /* Asegura que no haya desplazamiento vertical */
+    width: 100vw;             
+    left: 0;                   
+    box-sizing: border-box;    
+    margin: 0;                 
+    border-top: none;          
+    top: 0;                   
 }
 
 
