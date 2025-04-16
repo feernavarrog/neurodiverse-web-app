@@ -1,0 +1,99 @@
+<!-- test_user_condition.ejs -->
+<fieldset>
+    <legend>Patologías del Usuario</legend>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nombre de la Patología</th>
+                <th>Seleccionar</th>
+            </tr>
+        </thead>
+        <tbody id="conditionsTableBody">
+            <!-- Las patologías se insertarán aquí dinámicamente -->
+        </tbody>
+    </table>
+    <button onclick="loadUserConditions()">Cargar Patologías</button>
+    <button onclick="saveUserConditions()">Guardar Cambios</button>
+</fieldset>
+
+<script>
+    let initialUserConditions = new Set();
+
+    async function loadConditionsFromDB() {
+        const response = await fetchConditions();
+        console.log("Patologías obtenidas:", response);
+        const conditions = response.rows || [];
+        const tableBody = document.getElementById('conditionsTableBody');
+        tableBody.innerHTML = '';
+        
+        conditions.forEach(condition => {
+            const conditionId = condition[0];
+            const conditionName = condition[1];
+            tableBody.innerHTML += `<tr>
+                <td>${conditionName}</td>
+                <td><input type="checkbox" class="conditionCheckbox" data-condition-id="${conditionId}"></td>
+            </tr>`;
+        });
+    }
+
+    async function loadUserConditions() {
+        const userId = document.getElementById('userIdInputCreate').value;
+        if (!userId) {
+            showPopup("Por favor, ingrese un ID de usuario.");
+            return;
+        }
+        
+        const response = await fetchUserConditions(userId);
+        console.log("Respuesta de fetchUserConditions:", response);
+        
+        const conditions = response.rows || [];
+        initialUserConditions.clear();
+        document.querySelectorAll('.conditionCheckbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        conditions.forEach(condition => {
+            const conditionId = condition[1]; // Extraer condition_id de la respuesta
+            const checkbox = document.querySelector(`.conditionCheckbox[data-condition-id='${conditionId}']`);
+            if (checkbox) {
+                checkbox.checked = true;
+                initialUserConditions.add(conditionId.toString());
+            }
+        });
+    }
+
+    async function saveUserConditions() {
+        const userId = document.getElementById('userIdInputCreate').value;
+        if (!userId) {
+            showPopup("Por favor, ingrese un ID de usuario.");
+            return;
+        }
+        
+        const checkboxes = document.querySelectorAll('.conditionCheckbox');
+        let newUserConditions = new Set();
+        
+        checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                newUserConditions.add(checkbox.getAttribute('data-condition-id'));
+            }
+        });
+        
+        // Comparar cambios
+        for (const conditionId of newUserConditions) {
+            if (!initialUserConditions.has(conditionId)) {
+                await assignUserCondition(userId, conditionId); // Nueva asociación
+            }
+        }
+        
+        for (const conditionId of initialUserConditions) {
+            if (!newUserConditions.has(conditionId)) {
+                await removeUserCondition(userId, conditionId); // Eliminación de asociación
+            }
+        }
+        
+        showPopup("Patologías actualizadas correctamente.");
+        initialUserConditions = newUserConditions; // Actualizar estado inicial
+    }
+
+    document.addEventListener("DOMContentLoaded", loadConditionsFromDB);
+</script>

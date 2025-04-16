@@ -1,0 +1,177 @@
+<!-- test_product.ejs -->
+
+<fieldset>
+    <legend>Gestión de Productos</legend>
+    
+    <!-- Tabla de Productos -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Descuento</th>
+                <th>Stock</th>
+                <th>Foto</th>
+                <th>Marca</th>
+                <th>Categoría</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="productTableBody">
+            <!-- Los productos se insertarán aquí dinámicamente -->
+        </tbody>
+    </table>
+    <button onclick="loadProducts()">Cargar Productos</button>
+
+    <!-- Formulario de Producto -->
+    <fieldset>
+        <legend>Formulario de Producto</legend>
+        <label>ID:</label> <input type="text" id="productIdInput" disabled><br>
+        <label>Código:</label> <input type="text" id="productCodeInput"><br>
+        <label>Nombre:</label> <input type="text" id="productNameInput"><br>
+        <label>Descripción:</label> <input type="text" id="productDescriptionInput"><br>
+        <label>Precio:</label> <input type="number" id="productPriceInput"><br>
+        <label>Descuento:</label> <input type="number" id="productDiscountInput"><br>
+        <label>Stock:</label> <input type="number" id="productStockInput"><br>
+        <label>Foto:</label> <input type="file" id="productPhotoInput" accept="image/*" onchange="uploadImage()"><br>
+        <img id="productImagePreview" src="" style="max-width: 100px; display: none;"><br>
+        <label>Marca:</label> <select id="productBrandIdInput"></select><br>
+        <label>Categoría:</label> <select id="productCategoryIdInput"></select><br>
+        <label>Activo:</label> <input type="checkbox" id="productActiveInput"><br>
+        <button onclick="saveProduct()">Guardar Producto</button>
+    </fieldset>
+</fieldset>
+
+<script>
+    async function loadProducts() {
+        const response = await fetchProducts();
+        console.log("Respuesta de fetchProducts:", response);
+        
+        const products = response.rows || [];
+        const tableBody = document.getElementById('productTableBody');
+        tableBody.innerHTML = '';
+        
+        products.forEach(product => {
+            const row = `<tr>
+                <td>${product[0]}</td>
+                <td>${product[1]}</td>
+                <td>${product[2]}</td>
+                <td>${product[3]}</td>
+                <td>${product[4]}</td>
+                <td>${product[5]}</td>
+                <td>${product[6]}</td>
+                <td><img src="/product-images/${product[7]}" style="max-width: 100px;"></td>
+                <td>${product[8]}</td>
+                <td>${product[9]}</td>
+                <td>${product[10] === 1 ? 'Sí' : 'No'}</td>
+                <td>
+                    <button onclick="editProduct(${product[0]}, '${product[1]}', '${product[2]}', '${product[3]}', ${product[4]}, ${product[5]}, ${product[6]}, '${product[7]}', ${product[8]}, ${product[9]}, ${product[10]})">Editar</button>
+                    <button onclick="deleteProduct(${product[0]}, '${product[7]}')">Eliminar</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function saveProduct() {
+        const product = {
+            product_id: document.getElementById('productIdInput').value || null,
+            code: document.getElementById('productCodeInput').value,
+            product_name: document.getElementById('productNameInput').value,
+            product_description: document.getElementById('productDescriptionInput').value,
+            price: document.getElementById('productPriceInput').value,
+            discount: document.getElementById('productDiscountInput').value,
+            stock: document.getElementById('productStockInput').value,
+            reference_photo: document.getElementById('productImagePreview').src.split("/").pop(),
+            brand_id: document.getElementById('productBrandIdInput').value,
+            category_id: document.getElementById('productCategoryIdInput').value,
+            active: document.getElementById('productActiveInput').checked ? 1 : 0
+        };
+        
+        if (product.product_id) {
+            updateProduct(product);
+        } else {
+            createProduct(product);
+        }
+        
+        showPopup("Producto guardado correctamente.");
+        loadProducts();
+    }
+
+    function editProduct(id, code, name, description, price, discount, stock, photo, brandId, categoryId, active) {
+        document.getElementById('productIdInput').value = id;
+        document.getElementById('productCodeInput').value = code;
+        document.getElementById('productNameInput').value = name;
+        document.getElementById('productDescriptionInput').value = description;
+        document.getElementById('productPriceInput').value = price;
+        document.getElementById('productDiscountInput').value = discount;
+        document.getElementById('productStockInput').value = stock;
+        document.getElementById('productImagePreview').src = `/product-images/${photo}`;
+        document.getElementById('productImagePreview').style.display = "block";
+        document.getElementById('productBrandIdInput').value = brandId;
+        document.getElementById('productCategoryIdInput').value = categoryId;
+        document.getElementById('productActiveInput').checked = active === 1;
+    }
+
+    function deleteProduct(productId, photo) {
+        if (!confirm("¿Estás seguro de que deseas eliminar este producto?")) return;
+        
+        fetch(`/products/delete/${productId}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                showPopup(data.message);
+                fetch(`/products/delete-image/${photo}`, { method: 'DELETE' });
+                loadProducts();
+            })
+            .catch(error => console.error("Error eliminando el producto:", error));
+    }
+
+    async function loadBrandsAndCategories() {
+        const brands = await fetchBrands();
+        const categories = await fetchCategories();
+        
+        const brandSelect = document.getElementById('productBrandIdInput');
+        const categorySelect = document.getElementById('productCategoryIdInput');
+        
+        brandSelect.innerHTML = '';
+        categorySelect.innerHTML = '';
+        
+        brands.rows.forEach(brand => {
+            const option = document.createElement('option');
+            option.value = brand[0];
+            option.textContent = brand[1];
+            brandSelect.appendChild(option);
+        });
+        
+        categories.rows.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category[0];
+            option.textContent = category[1];
+            categorySelect.appendChild(option);
+        });
+    }
+
+    function uploadImage() {
+        const fileInput = document.getElementById("productPhotoInput");
+        const formData = new FormData();
+        formData.append("productImage", fileInput.files[0]);
+        
+        fetch("/products/upload-image", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("productImagePreview").src = data.imageUrl;
+            document.getElementById("productImagePreview").style.display = "block";
+            document.getElementById("productPhotoInput").dataset.imageUrl = data.imageUrl;
+        })
+        .catch(error => console.error("Error al subir imagen:", error));
+    }
+    
+    document.addEventListener('DOMContentLoaded', loadBrandsAndCategories);
+</script>

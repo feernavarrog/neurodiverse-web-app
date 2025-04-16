@@ -1,0 +1,270 @@
+<!-- test_user.ejs -->
+
+<fieldset>
+    <legend>Lista de Usuarios</legend>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>RUT</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birth Date</th>
+                <th>City</th>
+                <th>District</th>
+                <th>Street</th>
+                <th>Street Number</th>
+                <th>Mobile Phone</th>
+                <th>Additional Address Info</th>
+                <th>Active</th>
+                <th>User Role</th>
+            </tr>
+        </thead>
+        <tbody id="userTableBody">
+            <!-- Aquí se insertarán dinámicamente las filas con los datos -->
+        </tbody>
+    </table>
+    <button onclick="testGetAllUsers()">Obtener Todos los Usuarios</button>
+</fieldset>
+
+<!-- Búsqueda de Usuario -->
+<fieldset>
+    <legend>Buscar Usuario</legend>
+    <input type="text" id="emailInput" placeholder="Ingrese Email">
+    <input type="text" id="userIdInputSearch" placeholder="Ingrese ID">
+    <button onclick="testGetUserByEmailOrId()">Buscar Usuario por Email o ID</button>
+</fieldset>
+
+<!-- Formulario de Usuario -->
+<fieldset>
+    <legend>Datos del Usuario</legend>
+    <label>ID:</label> <input type="text" id="userIdInputCreate" value="Auto" disabled><br>
+    <label>RUT:</label> <input type="text" id="rutInput" value="12345678-0"><br>
+    <label>Email:</label> <input type="text" id="emailInputCreate" value="test@neuroverse.com"><br>
+    <label>Password:</label> <input type="password" id="passwordInput" value="Test1234"><br>
+    <label>First Name:</label> <input type="text" id="firstNameInput" value="Test"><br>
+    <label>Last Name:</label> <input type="text" id="lastNameInput" value="User"><br>
+    <label>Birth Date:</label> <input type="date" id="birthDateInput" value="1990-02-01"><br>
+    <label>City:</label> <input type="text" id="cityInput" value="Santiago"><br>
+    <label>District:</label> <input type="text" id="districtInput" value="Centro"><br>
+    <label>Street:</label> <input type="text" id="streetInput" value="Av. Test"><br>
+    <label>Street Number:</label> <input type="text" id="streetNumberInput" value="100"><br>
+    <label>Mobile Phone:</label> <input type="text" id="mobilePhoneInput" value="987654321"><br>
+    <label>Additional Address Info:</label> <input type="text" id="additionalAddressInput" value=""><br>
+    <label>Active:</label> 
+    <select id="activeInput">
+        <option value="1" selected>Active</option>
+        <option value="0">Inactive</option>
+    </select><br>
+    <label>User Role:</label> 
+    <select id="userRoleInput">
+        <option value="customer" selected>Customer</option>
+        <option value="admin">Admin</option>
+    </select><br>
+</fieldset>
+
+<!-- Acciones de Usuario -->
+<fieldset>
+    <legend>Acciones</legend>
+    <button onclick="testCreateUser()">Crear Usuario</button>
+    <button onclick="testUpdateUser()">Actualizar Usuario</button>
+    <input type="text" id="userIdInput" placeholder="ID Usuario a Eliminar">
+    <button onclick="testDeleteUser()">Eliminar Usuario</button>
+</fieldset>
+
+<script>
+    //  CRUD de Usuarios (Funciones de Prueba)
+
+     // Obtener todos los usuarios y mostrarlos en la tabla
+    async function testGetAllUsers() {
+        try {
+            const users = await fetchUsers();
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = ''; // Limpia la tabla antes de insertar nuevas filas
+
+            if (!users.rows || users.rows.length === 0) {
+                console.warn("No users found.");
+                return;
+            }
+
+            users.rows.forEach(user => {
+                const formattedDate = formatDate(user[6]);
+
+                //  Imprimir en consola todos los datos del usuario
+                console.log(`ID: ${user[0]}, RUT: ${user[1]}, Email: ${user[2]}, Password: ${user[3]}, First Name: ${user[4]}, Last Name: ${user[5]}, Birth Date: ${formattedDate}, City: ${user[7]}, District: ${user[8]}, Street: ${user[9]}, Street Number: ${user[10]}, Mobile Phone: ${user[11]}, Additional Address Info: ${user[12]}, Active: ${user[13]}, User Role: ${user[14]}`);
+
+                //  Agregar fila a la tabla con los atributos en el orden correcto
+                const row = `<tr>
+                    <td>${user[0]}</td>
+                    <td>${user[1]}</td>
+                    <td>${user[2]}</td>
+                    <td>${user[3]}</td>
+                    <td>${user[4]}</td>
+                    <td>${user[5]}</td>
+                    <td>${formattedDate}</td>
+                    <td>${user[7]}</td>
+                    <td>${user[8]}</td>
+                    <td>${user[9]}</td>
+                    <td>${user[10]}</td>
+                    <td>${user[11]}</td>
+                    <td>${user[12] || 'N/A'}</td>
+                    <td>${user[13] === 1 ? 'Active' : 'Inactive'}</td>
+                    <td>${user[14]}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+
+        } catch (error) {
+            console.error("Error retrieving users:", error);
+        }
+    }
+
+     // Buscar un usuario por Email o ID, poblar los inputs y mostrar en tabla
+        async function testGetUserByEmailOrId() {
+        const email = document.getElementById('emailInput').value.trim();
+        const userId = document.getElementById('userIdInputSearch').value.trim();
+
+        if (!email && !userId) {
+            console.warn("Debe ingresar un Email o un ID para buscar.");
+            return;
+        }
+
+        const filter = email ? { column: 'email', value: email } : { column: 'user_id', value: userId };
+
+        try {
+            const user = await fetchUsers(filter);
+
+            if (!user.rows || user.rows.length === 0) {
+                console.warn("Usuario no encontrado.");
+                return;
+            }
+
+            //  Poblar los inputs con los datos obtenidos
+            populateUserInputs(user.rows[0]);
+
+            //  Agregar el usuario a la tabla
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = ''; // Limpia la tabla antes de insertar nuevos datos
+
+            user.rows.forEach(userData => {
+                const formattedDate = formatDate(userData[6]);
+
+                console.log(`ID: ${userData[0]}, RUT: ${userData[1]}, Email: ${userData[2]}, Password: ${userData[3]}, First Name: ${userData[4]}, Last Name: ${userData[5]}, Birth Date: ${formattedDate}, City: ${userData[7]}, District: ${userData[8]}, Street: ${userData[9]}, Street Number: ${userData[10]}, Mobile Phone: ${userData[11]}, Additional Address Info: ${userData[12]}, Active: ${userData[13]}, User Role: ${userData[14]}`);
+
+                const row = `<tr>
+                    <td>${userData[0]}</td>
+                    <td>${userData[1]}</td>
+                    <td>${userData[2]}</td>
+                    <td>${userData[3]}</td>
+                    <td>${userData[4]}</td>
+                    <td>${userData[5]}</td>
+                    <td>${formattedDate}</td>
+                    <td>${userData[7]}</td>
+                    <td>${userData[8]}</td>
+                    <td>${userData[9]}</td>
+                    <td>${userData[10]}</td>
+                    <td>${userData[11]}</td>
+                    <td>${userData[12] || 'N/A'}</td>
+                    <td>${userData[13] === 1 ? 'Active' : 'Inactive'}</td>
+                    <td>${userData[14]}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+
+        } catch (error) {
+            console.error("Error retrieving user:", error);
+        }
+    }
+
+     // Crear un nuevo usuario con los valores de los inputs
+    async function testCreateUser() {
+        const newUser = {
+            rut: document.getElementById("rutInput").value,
+            email: document.getElementById("emailInputCreate").value,
+            password: document.getElementById("passwordInput").value,
+            first_name: document.getElementById("firstNameInput").value,
+            last_name: document.getElementById("lastNameInput").value,
+            birth_date: document.getElementById("birthDateInput").value,
+            city: document.getElementById("cityInput").value,
+            district: document.getElementById("districtInput").value,
+            street: document.getElementById("streetInput").value,
+            street_number: document.getElementById("streetNumberInput").value,
+            mobile_phone: document.getElementById("mobilePhoneInput").value,
+            additional_address_info: document.getElementById("additionalAddressInput").value,
+            active: Number(document.getElementById("activeInput").value),
+            user_role: document.getElementById("userRoleInput").value
+        };
+
+        const result = await createUser(newUser);
+        console.log(`User Created - ID: ${result.user_id}, Name: ${newUser.first_name}, Email: ${newUser.email}, Birth Date: ${formatDate(newUser.birth_date)}, City: ${newUser.city}`);
+    }
+
+     // Actualizar un usuario con los valores de los inputs poblados
+    async function testUpdateUser() {
+        const updatedUser = {
+            user_id: Number(document.getElementById("userIdInputCreate").value),
+            rut: document.getElementById("rutInput").value,
+            email: document.getElementById("emailInputCreate").value,
+            password: document.getElementById("passwordInput").value,
+            first_name: document.getElementById("firstNameInput").value,
+            last_name: document.getElementById("lastNameInput").value,
+            birth_date: document.getElementById("birthDateInput").value,
+            city: document.getElementById("cityInput").value,
+            district: document.getElementById("districtInput").value,
+            street: document.getElementById("streetInput").value,
+            street_number: document.getElementById("streetNumberInput").value,
+            mobile_phone: document.getElementById("mobilePhoneInput").value,
+            additional_address_info: document.getElementById("additionalAddressInput").value,
+            active: Number(document.getElementById("activeInput").value),
+            user_role: document.getElementById("userRoleInput").value
+        };
+
+        const result = await updateUser(updatedUser);
+        console.log(`User Updated: 
+        ID: ${updatedUser.user_id}, 
+        RUT: ${updatedUser.rut}, 
+        Email: ${updatedUser.email}, 
+        Password: ${updatedUser.password}, 
+        First Name: ${updatedUser.first_name}, 
+        Last Name: ${updatedUser.last_name}, 
+        Birth Date: ${formatDate(updatedUser.birth_date)}, 
+        City: ${updatedUser.city}, 
+        District: ${updatedUser.district}, 
+        Street: ${updatedUser.street}, 
+        Street Number: ${updatedUser.street_number}, 
+        Mobile Phone: ${updatedUser.mobile_phone}, 
+        Additional Address Info: ${updatedUser.additional_address_info}, 
+        Active: ${updatedUser.active === 1 ? 'Active' : 'Inactive'}, 
+        User Role: ${updatedUser.user_role}`);
+    }
+
+     // Eliminar un usuario por ID
+    async function testDeleteUser() {
+        const userId = document.getElementById('userIdInput').value;
+        const result = await deleteUser(userId);
+        console.log("Usuario eliminado:", result);
+    }
+
+    //  Funciones Auxiliares
+
+     // Poblar los inputs con los datos de un usuario
+    function populateUserInputs(userData) {
+        document.getElementById("userIdInputCreate").value = userData[0];
+        document.getElementById("rutInput").value = userData[1];
+        document.getElementById("emailInputCreate").value = userData[2];
+        document.getElementById("passwordInput").value = userData[3];
+        document.getElementById("firstNameInput").value = userData[4];
+        document.getElementById("lastNameInput").value = userData[5];
+        document.getElementById("birthDateInput").value = formatDateInput(userData[6]);
+        document.getElementById("cityInput").value = userData[7];
+        document.getElementById("districtInput").value = userData[8];
+        document.getElementById("streetInput").value = userData[9];
+        document.getElementById("streetNumberInput").value = userData[10];
+        document.getElementById("mobilePhoneInput").value = userData[11];
+        document.getElementById("additionalAddressInput").value = userData[12] || "";
+        document.getElementById("activeInput").value = userData[13];
+        document.getElementById("userRoleInput").value = userData[14];
+    }
+</script>

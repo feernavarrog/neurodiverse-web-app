@@ -1,0 +1,85 @@
+<aside id="sidebar">
+    <div class="sidebar-header">
+        
+        <h3>Categorías</h3>
+        <button id="close-sidebar" class="btn-close">✖</button> <!-- Botón para cerrar sidebar -->
+    </div>
+    <ul id="dynamic-list">
+        <!-- Los datos de las categorías se generarán dinámicamente con iconos -->
+    </ul>
+</aside>
+
+<div id="overlay" class="overlay"></div>
+
+<script>
+    // Función para poblar el sidebar con categorías e iconos
+    async function populateSidebarCategories() {
+        try {
+            // Obtener categorías desde la API (esto puede ser desde tu API o un archivo JSON)
+            const response = await fetchCategories();
+
+            const categoryList = document.getElementById("dynamic-list");
+            categoryList.innerHTML = ""; // Limpiar la lista antes de agregar nuevos elementos
+
+            if (response.rows && response.rows.length > 0) {
+                response.rows.forEach(category => {
+                    const categoryId = category[0];  // ID de la categoría
+                    const categoryName = category[1]; // Nombre de la categoría
+
+                    // 🔹 Excluir categorías no deseadas
+                    if (categoryName === "Sin categoría" || categoryName === "Producto Futuro") {
+                        return;
+                    }
+                    
+                    // Iconos para las categorías (puedes personalizarlos según las categorías)
+                    const categoryIcons = {
+                        "Aislamiento Auditivo": "fas fa-headphones-alt",  // Aislamiento auditivo
+                        "Entorno Suave": "fas fa-cloud",                  // Entorno suave
+                        "Gadgets": "fas fa-cogs",                          // Gadgets
+                        "Próximamente": "fas fa-clock",                    // Próximamente
+                        "Ir a Descuentos": "fas fa-tag"                   // Ir a descuentos
+
+
+                    };
+
+                    const categoryIcon = categoryIcons[categoryName] || "fas fa-box"; // Usar icono por defecto si no está especificado
+                    
+                    // Crear el elemento de la lista con el icono y nombre de la categoría
+                    const listItem = document.createElement("li");
+                    listItem.innerHTML = `
+                        <a href="/products?category=${categoryId}" class="sidebar-link">
+                            <i class="${categoryIcon}"></i> ${categoryName}
+                        </a>
+                    `;
+                    
+                    // Agregar el item a la lista del sidebar
+                    categoryList.appendChild(listItem);
+                });
+            }
+
+            // Agregar manualmente el enlace "PROXIMAMENTE"
+            const upcomingItem = document.createElement("li");
+            upcomingItem.innerHTML = `
+                <a href="/products?category=5" class="sidebar-link upcoming-category">
+                    <i class="fas fa-hourglass-start"></i> PROXIMAMENTE
+                </a>
+            `;
+            categoryList.appendChild(upcomingItem);
+
+            // Agregar manualmente el enlace "IR A DESCUENTOS"
+            const discountsItem = document.createElement("li");
+            discountsItem.innerHTML = `
+                <a href="/products?category=discount" class="sidebar-link discount-category">
+                    <i class="fas fa-tags"></i> IR A DESCUENTOS
+                </a>
+            `;
+            categoryList.appendChild(discountsItem);
+
+        } catch (error) {
+            console.error("Error al cargar las categorías:", error);
+        }
+    }
+
+    // Llamar a la función cuando se cargue la vista
+    document.addEventListener("DOMContentLoaded", populateSidebarCategories);
+</script>

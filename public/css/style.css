@@ -1,0 +1,664 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    box-sizing: border-box; 
+    height: 100%; 
+    width: 100%; 
+    overflow-x: hidden; 
+    flex-wrap: wrap;
+    
+}
+
+/* Contenedores principales de la página */
+* {
+    box-sizing: border-box; 
+}
+
+/* Asegura que el contenido no se desborde */
+body, .main-products, .product-list, .product-item, .item-container, .details-container {
+    width: 100%;
+    max-width: 100%;
+}
+
+
+
+/* Asegura que los elementos no tengan desbordamiento */
+html, body, .main-products {
+    overflow-x: hidden;
+}
+
+
+
+
+
+/*----------------------------NAV--------------------*/
+.logo {
+    max-height: 50px; /* Ajusta el tamaño del logo */
+    margin-right: 1200px;
+}
+
+.menu-toggle-btn {
+    border: none;
+    background: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-left: 20px;
+}
+
+.icon-user, .icon-cart {
+    font-size: 1.5rem;
+    margin-left: 20px;
+    color: #000000;
+}
+/* Barra de navegación */
+.navbar {
+    padding: 1px;
+    background-image: linear-gradient(to right, #fc899a, #ecc3c9);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    
+}
+
+.image-center {
+    margin-top: 210px;
+    flex-wrap: wrap;
+}
+
+/* Contenedor para el logo y el menú */
+nav > a {
+    display: flex;
+    align-items: center;
+}
+
+
+
+/* Contenedor para los iconos de usuario y carrito */
+.nav-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+    margin-right: 100px;
+}
+
+
+
+/* Efecto hover para los iconos */
+.icon-user:hover, .icon-cart:hover {
+    transform: scale(1.2);
+    color: #f5ecbe;
+    opacity: 0.7;
+}
+
+
+/* Estilos cuando se pasa el ratón por encima del botón de menú */
+.menu-toggle-btn:hover {
+    color: #020202;
+    transform: scale(1.2);
+}
+
+/* Estilos para el icono dentro del botón de menú */
+.menu-toggle-btn i {
+    font-size: 30px;
+    color: #000000;
+}
+
+.menu-toggle-btn:hover i {
+    color: #f5ecbe;
+    transform: scale(1.2);
+}
+
+/* Responsividad */
+@media (max-width: 1200px) {
+    .logo {
+        margin-right: 600px;
+    }
+}
+
+@media (max-width: 992px) {
+    .logo {
+        margin-right: 400px;
+    }
+}
+
+@media (max-width: 768px) {
+    .logo {
+        margin-right: 200px;
+    }
+}
+
+@media (max-width: 576px) {
+    .logo {
+        margin-right: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .icon-user, .icon-cart {
+        font-size: 24px;
+    }
+
+    .menu-toggle-btn i {
+        font-size: 24px;
+    }
+
+    .image-center {
+        margin-top: 100px;
+    }
+}
+
+
+
+/* Contenedor principal */
+
+
+/* Secciones de banners */
+section {
+    margin-bottom: 30px;
+    padding: 15px;
+    background: #fff;
+    border-radius: 1px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fondoAnimado {
+    0% {
+      background-color: #CDE7C7; 
+    }
+    50% {
+      background-color: #ECC3C9; 
+    }
+    100% {
+      background-color: #BACFE5; 
+    }
+  }
+  
+  /* Estilos para el footer */
+  footer {
+    color: rgb(0, 0, 0);
+    padding: 100px;
+    text-align: center;
+    animation: fondoAnimado 5s infinite; /* Animación que cambia el fondo cada 5 segundos */
+  }
+  
+  footer hr {
+    border: 0;
+    border-top: 1px solid #ecf0f1;
+    margin: 20px 0;
+  }
+  
+  footer h3 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+  
+  footer p {
+    font-size: 1rem;
+    margin: 5px 0;
+  }
+  
+  footer a {
+    text-decoration: none;
+    color: #000000;
+    font-weight: bold;
+    transition: color 0.3s;
+  }
+  
+  footer a:hover {
+    color: #bde5ff;
+  }
+  
+  /* Estilo de los enlaces sociales */
+  footer p a {
+    margin: 0 10px;
+  }
+
+/* Estilo general del sidebar */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px; 
+    width: 300px;  
+    height: 100%;
+    background: #ffffff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
+    padding: 30px 20px;
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Estilo cuando el sidebar debe ser visible */
+#sidebar.show-sidebar {
+    left: 0;
+}
+
+/* Overlay que cubre todo el contenido menos el sidebar */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+    display: none;
+    z-index: 999;
+}
+
+/* Cuando se activa el overlay, se mostrará */
+.show-overlay {
+    display: block;
+}
+
+
+
+/* Estilo para el botón de cerrar */
+#close-sidebar {
+    background: transparent;
+    border: none;
+    font-size: 26px;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    
+    position: absolute; 
+    top: 20px; 
+    right: 20px; 
+}
+
+
+#close-sidebar:hover {
+    color: #ff6fcf; /* Color brillante para el hover */
+}
+
+/* Título de categorías */
+#sidebar-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    color: #000000;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    margin-top: 60px; /* Mover el título hacia abajo */
+}
+
+/* Asegurarse de que el contenedor del título también tenga espacio adecuado */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-top: 30px; /* Asegura que haya espacio en la parte superior */
+}
+
+/* Estilo para los enlaces de las categorías */
+.sidebar-link {
+    color: #000000;
+    text-decoration: none;
+    font-size: 15px;
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    border-radius: 12px; /* Bordes más suaves */
+    margin: 5px 0;
+    font-family: 'Verdana', sans-serif;
+}
+
+/* Estilo de los iconos */
+.sidebar-link i {
+    margin-right: 10px; /* Espacio entre el icono y el texto */
+    font-size: 20px; /* Tamaño del icono */
+}
+
+/* Efecto hover en los enlaces */
+.sidebar-link:hover {
+    color: #afe2a3; /* Color pastel brillante */
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Estilo para las categorías especiales */
+.upcoming-category {
+    font-weight: bold;
+    color: #f0b0b9; /* Rosa brillante */
+}
+
+.discount-category {
+    font-weight: bold;
+    color: #97bae0; 
+}
+
+/* Eliminar puntos (viñetas) de las listas */
+#dynamic-list {
+    list-style-type: none; 
+    padding-left: 0; 
+    margin: 0; 
+}
+
+/* Estilo para los elementos de la lista con separación */
+#dynamic-list li {
+    border-bottom: 1px solid #6d69694e; 
+    padding-bottom: 10px;
+    margin-bottom: 10px; 
+}
+
+/* --------------CART--------------- */
+#cart {
+    position: fixed;
+    right: -400px; /* Oculto por defecto */
+    top: 0;
+    width: 350px;
+    height: 100%;
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    padding: 20px;
+    overflow-y: auto;
+    border-top-left-radius: 20px;
+
+    /* Transición más suave con cubic-bezier */
+    transition: right 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mostrar el carrito */
+#cart.show-cart {
+    right: 0; /* Desliza el carrito hacia dentro */
+}
+
+/* Mostrar el overlay */
+#cart-overlay.show-overlay {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+
+/* Normalizar tamaño de los productos */
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+    min-height: 100px; 
+    box-sizing: border-box;
+    margin-top: -20px;
+}
+
+/* Imagen del producto */
+.cart-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Información del producto */
+.product-info {
+    display: flex;
+    flex-direction: column; 
+    flex: 1; 
+    margin-left: 10px; 
+}
+
+/* Detalles del precio y el selector en línea */
+.product-details {
+    display: flex;
+    align-items: center; 
+    gap: 10px; 
+}
+/* Permitir que los nombres largos se ajusten a varias líneas */
+.product-name {
+    white-space: normal; 
+    word-wrap: break-word; 
+    max-width: 200px; 
+}
+
+/* Evitar saltos de línea en nombre y precio */
+
+.product-price {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+/* Selector de cantidad */
+.quantity-selector {
+    width: 40px;
+}
+
+/* Botón de eliminar */
+.remove-item {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+
+/* Sección del total */
+#cart p {
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+/* Botón de checkout */
+#checkout {
+    width: 100%;
+    padding: 10px 0;
+    margin-top: 20px;
+    background: #ECC3C9;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Botón hover */
+#checkout:hover {
+    background: #BACFE5;
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 480px) {
+    #cart {
+        width: 100%; 
+    }
+}
+
+
+
+#login-modal h3 {
+    font-size: 24px; 
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#login-modal.active {
+    display: block;
+}
+
+
+/*buttons login-modal*/
+
+/* Estilo para el botón 'Entrar con e-mail y contraseña' */
+#show-login {
+    background-color: #bacfe5; 
+    color: rgb(0, 0, 0); 
+    font-size: 16px; 
+    padding: 10px 20px; 
+    border: none;
+    border-radius: 5px; 
+    width: 100%; 
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+    margin-top: 20px;
+}
+
+
+#show-login:hover {
+    background-color: #a5d7cd; 
+}
+/* Estilo para el enlace */
+.link-register {
+    text-decoration: underline;
+    color: #000000; 
+    font-size: 16px; 
+    padding: 12px 20px; 
+    border-radius: 5px; 
+    transition: color 0.3s ease, transform 0.3s ease; 
+    display: inline-block;
+    
+}
+
+.link-register:hover {
+    color: #bacfe5; 
+    transform: scale(1.05); 
+    
+}
+
+
+
+/* Efecto hover del botón de cerrar */
+#close-login:hover {
+    background-color: #f1f1f1;
+}
+
+/* Fondo desenfocado */
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(8px); 
+    z-index: 998; 
+    display: none; 
+}
+
+/* Ajustar el modal para estar sobre el overlay */
+#login-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999; /* Por encima del overlay */
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    width: 400px;
+    display: none; /* Oculto por defecto */
+}
+
+
+/* Estilo para los inputs dentro del formulario */
+#login-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+
+}
+
+/* Efecto al poner el foco sobre los inputs */
+#login-form input:focus {
+    border-color: #a5d7cd; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+
+/* Estilo para el botón de inicio de sesión */
+#login-form button {
+    background-color: #ecc3c9; 
+    color: rgb(0, 0, 0); 
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    width: 100%; 
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Efecto de transición */
+}
+
+/* Efecto de hover sobre el botón */
+#login-form button:hover {
+    background-color: #f5ecbe; 
+    transform: scale(1.05); 
+}
+/* Close Button */
+#close-login {
+    background-color: transparent;
+    color: #333;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+/* Botones de cerrar */
+.btn-close {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+}
+
+
+/* Barra con texto desplazándose */
+.custom-moving-navbar {
+    background-color: #ffe97a;  
+    padding: 8px 0;            /* Mantiene el espacio interno */
+    position: relative;
+    overflow: hidden;  
+    width: 100vw;              /* Usa el 100% del ancho de la ventana */
+    left: 0;                   /* Asegúrate de que comience desde el borde izquierdo */
+    box-sizing: border-box;    /* Incluye el padding en el cálculo del ancho */
+    margin: 0;                 /* Elimina cualquier margen exterior */
+    border-top: none;          /* Asegura que no haya un borde superior */
+    top: 0;                    /* Asegura que no haya desplazamiento vertical */
+}
+
+
+
+
+
+.moving-text {
+    display: inline-block;
+    white-space: nowrap;  
+    animation: scrollText 15s linear infinite; 
+    font-size: 18px;
+    color: rgb(4, 4, 4); 
+}
+
+/* Animación para mover el texto de izquierda a derecha */
+@keyframes scrollText {
+    0% {
+        transform: translateX(100%); 
+    }
+    100% {
+        transform: translateX(-100%); 
+    }
+}
+
+
+
+

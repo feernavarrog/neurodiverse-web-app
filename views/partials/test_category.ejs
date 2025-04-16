@@ -1,0 +1,77 @@
+<!-- test_category.ejs -->
+
+<fieldset>
+    <legend>Gestión de Categorías</legend>
+    
+    <!-- Tabla de Categorías -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="categoryTableBody">
+            <!-- Las categorías se insertarán aquí dinámicamente -->
+        </tbody>
+    </table>
+    <button onclick="loadCategories()">Cargar Categorías</button>
+
+    <!-- Formulario de Categoría -->
+    <fieldset>
+        <legend>Formulario de Categoría</legend>
+        <label>ID:</label> <input type="text" id="categoryIdInput" disabled><br>
+        <label>Nombre:</label> <input type="text" id="categoryNameInput"><br>
+        <label>Descripción:</label> <input type="text" id="categoryDescriptionInput"><br>
+        <button onclick="saveCategory()">Guardar Categoría</button>
+    </fieldset>
+</fieldset>
+
+<script>
+    async function loadCategories() {
+        const response = await fetchCategories();
+        console.log("Respuesta de fetchCategories:", response);
+        
+        const categories = response.rows || [];
+        const tableBody = document.getElementById('categoryTableBody');
+        tableBody.innerHTML = '';
+        
+        categories.forEach(category => {
+            const row = `<tr>
+                <td>${category[0]}</td>
+                <td>${category[1]}</td>
+                <td>${category[2]}</td>
+                <td>
+                    <button onclick="editCategory(${category[0]}, '${category[1]}', '${category[2]}')">Editar</button>
+                    <button onclick="deleteCategory(${category[0]})">Eliminar</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function editCategory(id, name, description) {
+        document.getElementById('categoryIdInput').value = id;
+        document.getElementById('categoryNameInput').value = name;
+        document.getElementById('categoryDescriptionInput').value = description;
+    }
+
+    async function saveCategory() {
+        const category = {
+            category_id: document.getElementById('categoryIdInput').value || null,
+            category_name: document.getElementById('categoryNameInput').value,
+            category_description: document.getElementById('categoryDescriptionInput').value
+        };
+        
+        if (category.category_id) {
+            await updateCategory(category);
+        } else {
+            await createCategory(category);
+        }
+        
+        showPopup("Categoría guardada correctamente.");
+        loadCategories();
+    }
+</script>

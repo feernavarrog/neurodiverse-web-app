@@ -1,0 +1,72 @@
+<!-- test_brand.ejs -->
+
+<fieldset>
+    <legend>Gestión de Marcas</legend>
+    
+    <!-- Tabla de Marcas -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="brandTableBody">
+            <!-- Las marcas se insertarán aquí dinámicamente -->
+        </tbody>
+    </table>
+    <button onclick="loadBrands()">Cargar Marcas</button>
+
+    <!-- Formulario de Marca -->
+    <fieldset>
+        <legend>Formulario de Marca</legend>
+        <label>ID:</label> <input type="text" id="brandIdInput" disabled><br>
+        <label>Nombre:</label> <input type="text" id="brandNameInput"><br>
+        <button onclick="saveBrand()">Guardar Marca</button>
+    </fieldset>
+</fieldset>
+
+<script>
+    async function loadBrands() {
+        const response = await fetchBrands();
+        console.log("Respuesta de fetchBrands:", response);
+        
+        const brands = response.rows || [];
+        const tableBody = document.getElementById('brandTableBody');
+        tableBody.innerHTML = '';
+        
+        brands.forEach(brand => {
+            const row = `<tr>
+                <td>${brand[0]}</td>
+                <td>${brand[1]}</td>
+                <td>
+                    <button onclick="editBrand(${brand[0]}, '${brand[1]}')">Editar</button>
+                    <button onclick="deleteBrand(${brand[0]})">Eliminar</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function editBrand(id, name) {
+        document.getElementById('brandIdInput').value = id;
+        document.getElementById('brandNameInput').value = name;
+    }
+
+    async function saveBrand() {
+        const brand = {
+            brand_id: document.getElementById('brandIdInput').value || null,
+            brand_name: document.getElementById('brandNameInput').value
+        };
+        
+        if (brand.brand_id) {
+            await updateBrand(brand);
+        } else {
+            await createBrand(brand);
+        }
+        
+        showPopup("Marca guardada correctamente.");
+        loadBrands();
+    }
+</script>

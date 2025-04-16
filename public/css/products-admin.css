@@ -1,0 +1,577 @@
+
+body {
+    font-family: 'Inter', sans-serif; 
+    background-color: #f5f7fa; 
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* === Contenedor principal === */
+.admin-main {
+    width: 90%;
+    margin: 40px auto; 
+    background-color: white;
+    padding: 30px;
+    border-radius: 16px; 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); 
+}
+
+/* === Título principal === */
+.admin-title {
+    font-size: 2.5rem; 
+    color: #2c3e50; 
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* === Descripción o subtítulo === */
+.admin-description {
+    font-size: 1.2rem;
+    color: #7f8c8d; 
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* === Línea horizontal === */
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #dcdfe6; 
+    margin: 30px 0;
+}
+
+/* === Estilo general para las tablas === */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    border-radius: 12px;
+    overflow: hidden; 
+}
+
+/* === Cabecera de la tabla === */
+.table-header {
+    background-color: #BACFE5; 
+    color: rgb(0, 0, 0);
+    font-size: 1.1rem;
+    padding: 16px;
+    text-align: left;
+}
+
+/* === Celdas de la tabla === */
+.admin-table td {
+    padding: 14px 16px;
+    color: #555;
+    font-size: 1rem;
+    border-bottom: 1px solid #eaecef; 
+}
+
+/* === Filas de la tabla al pasar el mouse === */
+.admin-table tr:hover {
+    background-color: #f8f9fc; 
+}
+
+/* === Imagen del producto === */
+.product-image {
+    border-radius: 8px;
+    max-width: 60px;
+    height: auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-edit {
+    background-color: #CDE7C7; /* Verde */
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-edit:hover {
+    background-color: #45a049;
+}
+
+.btn-delete {
+    background-color: #f44336; /* Rojo */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+    transition: background 0.3s;
+    margin-top: 10px;
+}
+
+.btn-delete:hover {
+    background-color: #d32f2f;
+}
+
+
+/* === Botón para agregar producto === */
+.btn-add-product {
+    padding: 14px 32px;
+    background-color: #ECC3C9; 
+    color: rgb(7, 7, 7);
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: block;
+    margin: 40px auto;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-add-product:hover {
+    background-color: #BACFE5;
+    box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+}
+
+/* === Modal de Producto === */
+#product-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); 
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; 
+    backdrop-filter: blur(3px); 
+    overflow: hidden; 
+}
+
+/* Contenido del Modal */
+.modal-content {
+    background-color: white; 
+    padding: 60px;
+    border-radius: 12px;
+    max-width: 900px; 
+    width: 90%; 
+    max-height: 80vh; 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow-y: auto; 
+    opacity: 0;
+    transform: translateY(-15px);
+    animation: slideIn 0.3s ease forwards;
+}
+
+/* Animación de entrada */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Botón de cierre */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f44336; /* Rojo */
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.close-btn:hover {
+    background: #d32f2f;
+}
+
+/* Encabezado del Modal */
+.modal-header {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Cuerpo del Modal */
+.modal-body {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+}
+
+/* Pie del Modal (Botones) */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.modal-footer button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+/* Botón principal (Aceptar o Guardar) */
+.modal-footer .btn-primary {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: #45a049;
+}
+
+/* Botón secundario (Cancelar) */
+.modal-footer .btn-secondary {
+    background-color: #bbb; /* Gris */
+    color: white;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #999;
+}
+
+/* Botón de Cerrar */
+.close-button {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #555;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.close-button:hover {
+    transform: scale(1.2);
+}
+
+/* Formulario dentro del Modal */
+#product-modal .modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Inputs del Modal */
+#product-modal input,
+#product-modal textarea,
+#product-modal select {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* Botón Guardar */
+.button-save {
+    padding: 12px 24px;
+    background-color: #4A90E2; /* Azul vibrante */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.button-save:hover {
+    background-color: #357ABD;
+}
+
+/* === Modal de Descuento === */
+.discount-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.discount-modal-overlay .modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* ---------- Estilos base para los botones personalizados ---------- */
+.custom-btn {
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 15px 34px; 
+    font-size: 16px; 
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 600; 
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    margin-bottom: 30px;
+    margin-left: 40px;
+    margin-top: 30px;
+    
+}
+
+/* ---------- Botón para Recargar (Acciones principales) ---------- */
+.btn-refresh {
+    background: linear-gradient(135deg, #5992ce, #BACFE5);
+    color: rgb(85, 81, 81);
+}
+
+.btn-refresh:hover {
+    background: linear-gradient(135deg, #BACFE5, #5992ce);
+    box-shadow: 0 6px 20px rgba(106, 17, 203, 0.3); 
+    transform: translateY(-2px); /
+}
+
+.btn-refresh:active {
+    transform: translateY(1px); 
+}
+
+/* ---------- Botón para Descuento (Acciones delicadas) ---------- */
+.btn-discount {
+    background: linear-gradient(135deg, #ECC3C9, #cd7784);
+    color: rgb(85, 81, 81);
+}
+
+.btn-discount:hover {
+    background: linear-gradient(135deg, #cd7784, #ECC3C9);
+    box-shadow: 0 6px 20px rgba(255, 111, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-discount:active {
+    transform: translateY(1px);
+}
+
+/* ---------- Botón para Informe (Acciones informativas) ---------- */
+.btn-report {
+    background: linear-gradient(135deg, #CDE7C7, #96e085);
+    color: rgb(85, 81, 81);
+}
+
+.btn-report:hover {
+    background: linear-gradient(135deg, #96e085, #CDE7C7);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-report:active {
+    transform: translateY(1px);
+}
+
+/* ---------- Íconos dentro de los botones ---------- */
+.custom-btn i {
+    margin-right: 8px; 
+    font-size: 18px; 
+}
+
+/* ---------- Adaptación a pantallas pequeñas ---------- */
+@media (max-width: 768px) {
+    .custom-btn {
+        width: 100%; 
+        padding: 14px 20px; 
+        font-size: 14px; 
+    }
+
+    .custom-btn i {
+        font-size: 16px; 
+    }
+}
+
+
+
+/* Estilo personalizado para el botón "Guardar Producto" */
+.btn-save-product {
+    background: linear-gradient(135deg, #da8793, #ECC3C9); 
+    color: rgb(0, 0, 0); 
+    padding: 12px 24px; 
+    font-size: 16px; 
+    width: 200px;
+    border: none; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+/* Efecto al pasar el mouse */
+.btn-save-product:hover {
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Efecto al hacer clic */
+.btn-save-product:active {
+    transform: translateY(1px); 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 768px) {
+    .btn-save-product {
+        width: 100%; 
+        font-size: 14px; 
+        padding: 10px; 
+    }
+}
+
+
+
+/* Estilos para el overlay del modal */
+.discount-modal-overlay {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Fondo oscuro semi-transparente */
+    z-index: 999; /* Asegura que esté por encima del resto */
+}
+
+/* Contenido del modal */
+.discount-modal-content {
+    background: #fff;
+    width: 90%;
+    max-width: 500px; /* Limita el ancho máximo */
+    margin: 10% auto;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: fadeIn 0.4s ease;
+}
+
+/* Título del modal */
+.discount-modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+/* Descripción del modal */
+.discount-modal-description {
+    font-size: 16px;
+    color: #555;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+/* Botón de cierre */
+.discount-close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #555;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+
+/* Etiquetas del formulario */
+.discount-label {
+    display: block;
+    font-weight: 600;
+    margin: 10px 0 5px;
+    color: #444;
+}
+
+/* Select y Input */
+.discount-select,
+.discount-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.discount-select:focus,
+.discount-input:focus {
+    border-color: #66BB6A; /* Resalta el campo al enfocarse */
+    outline: none;
+}
+
+/* Mensaje de error */
+.discount-error-message {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* Botón para aplicar descuento */
+.discount-apply-button {
+    width: 100%;
+    background: linear-gradient(135deg, #4CAF50, #45A049);
+    color: white;
+    font-size: 16px;
+    padding: 12px 20px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.discount-apply-button:hover {
+    background: linear-gradient(135deg, #45A049, #388E3C);
+    transform: translateY(-2px);
+}
+
+/* Animación de entrada del modal */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsivo: Modal en pantallas pequeñas */
+@media (max-width: 600px) {
+    .discount-modal-content {
+        padding: 30px;
+    }
+
+    .discount-modal-title {
+        font-size: 20px;
+    }
+
+    .discount-close-button {
+        font-size: 24px;
+    }
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Usuarios</title>
+    <link rel="stylesheet" href="/css/testing.css">
+</head>
+<body>
+    <h1>Vista Testing</h1>
+
+    <!-- Usuarios -->
+     <%- include('partials/test_user') %>
+
+    <!-- Patologias de usuario -->
+    <%- include('partials/test_user_condition') %>
+    
+    <!-- Categorías de Productos -->    
+    <%- include('partials/test_category') %>
+
+    <!-- Patologias de los usuarios -->    
+    <%- include('partials/test_condition') %>
+
+    <!-- Marcas de los productos -->
+    <%- include('partials/test_brand') %>
+
+    <!-- Productos -->
+    <%- include('partials/test_product') %>
+
+<script src="/js/crudManager.js"></script>
+<script src="/js/global.js"></script>
+</body>
+</html>

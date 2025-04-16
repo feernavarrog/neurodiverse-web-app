@@ -1,0 +1,173 @@
+<!-- views/products.ejs -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NProductos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/homestyle.css" />
+    <link rel="stylesheet" href="/css/item.css" />
+    <link rel="stylesheet" href="/css/products.css" />
+    <link rel="stylesheet" href="/css/popupstyles.css" />
+    
+</head>
+<body>
+    
+    <%- include('partials/first-nav') %>
+    <%- include('partials/navbar') %>
+    <%- include('partials/sidebar') %>
+    <%- include('partials/cart') %>
+    <%- include('partials/popups') %>
+
+    <!-- Contenedor de productos dinámicos -->
+
+    <main class="main-products">
+        <h2 id="category-title" style="text-align: center;">Cargando...</h2> 
+        <div class="product-descript">
+            <p id="category-description">Cargando descripción...</p>
+        </div>
+        <div class="product-list" id="product-list">
+            <!-- Los productos se generarán aquí dinámicamente -->
+        </div>
+    </main>
+    
+
+    <%- include('partials/first-nav') %>
+    <%- include('partials/footer') %>
+    
+    <script src="/js/popup.js"></script>
+    <script src="\js\crudManager.js"></script>
+    <script src="\js\global.js"></script>
+    <script>
+        // Función para obtener el parámetro "category" de la URL
+        function getCategoryIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get("category"); // Devuelve el ID de la categoría o el alias (future, discount)
+        }
+    
+        // Función para cargar la categoría y productos dinámicamente
+        async function loadProductsByCategory() {
+            try {
+                const categoryId = getCategoryIdFromUrl();
+                if (!categoryId) {
+                    document.getElementById("category-title").innerText = "Categoría no encontrada";
+                    return;
+                }
+    
+                let categoryName = "";
+                let categoryDescription = "";
+                let filter = {}; // Objeto de filtro para `fetchProducts()`
+    
+                // 1️⃣ Manejar las categorías especiales "future" y "discount"
+                if (categoryId === "future" || categoryId === "discount") {
+                    categoryName = categoryId === "future" ? "Próximamente" : "Ofertas y Descuentos";
+                    categoryDescription = categoryId === "future"
+                        ? "Estos productos estarán disponibles en el futuro."
+                        : "Explora productos con descuentos especiales.";
+    
+                    filter = { column: "discount", value: 0, operator: ">" }; // Buscar productos con descuento mayor a 0
+                } else {
+                    // 2️⃣ Obtener todas las categorías y filtrar por la categoría seleccionada
+                    const categoryResponse = await fetchCategories();
+                    const categories = categoryResponse.rows || [];
+                    const selectedCategory = categories.find(cat => cat[0] == categoryId);
+    
+                    if (!selectedCategory) {
+                        document.getElementById("category-title").innerText = "Categoría no encontrada";
+                        document.getElementById("category-description").innerText = "";
+                        return;
+                    }
+    
+                    categoryName = selectedCategory[1];
+                    categoryDescription = selectedCategory[2] || "Sin descripción.";
+                    filter = { column: "category_id", value: categoryId }; // Filtro normal por categoría
+                }
+    
+                // Asignar título y descripción
+                document.getElementById("category-title").innerText = categoryName;
+                document.getElementById("category-description").innerText = categoryDescription;
+    
+                // 3️⃣ Obtener productos usando el filtro correspondiente
+                const productResponse = await fetchProducts(filter);
+                let products = productResponse.rows || [];
+    
+                // 🔹 Si estamos en "future" o "discount", filtramos solo productos con descuento real
+                if (categoryId === "future" || categoryId === "discount") {
+                    products = products.filter(product => product[5] > 0); // Índice 5 es el descuento
+                }
+    
+                const productList = document.getElementById("product-list");
+                productList.innerHTML = ""; // Limpiar lista de productos antes de agregar nuevos
+    
+                if (products.length > 0) {
+                    products.forEach(product => {
+                        const productId = product[0];
+                        const productCode = product[1];
+                        const productName = product[2];
+                        const productPrice = product[4];
+                        const productImage = product[7];
+                        const productDiscount = product[5]; // Índice del descuento
+    
+                        // Calcular precio con descuento si aplica
+                        let finalPrice = productPrice;
+                        let discountTag = "";
+                        if (productDiscount > 0) {
+                            finalPrice = productPrice * (1 - productDiscount / 100);
+                            discountTag = `
+                                            <p class="product-discount" style="color: red; margin: 0;">
+                                                🏷️ -${productDiscount}% descuento
+                                            </p>
+                                            <p class="product-old-price" style="text-decoration: line-through; color: gray; font-size: 0.9em;">
+                                                Precio anterior: ${formatCLP(productPrice)}
+                                            </p>
+                                        `;
+                        }
+    
+                        // Obtener el stock del producto (columna 7 → índice [6])
+                        const productStock = parseInt(product[6] || "0", 10); 
+
+                        // Aplicar clase CSS para productos sin stock
+                        let unavailableClass = productStock === 0 ? "product-unavailable" : "";
+
+                        // Agregar mensaje de "No disponible por el momento"
+                        let unavailableTag = productStock === 0 
+                            ? `<p class="product-not-available">No disponible por el momento</p>` 
+                            : "";
+
+                        // Modificar el enlace para que no sea clickeable si el producto no tiene stock
+                        let productElement = document.createElement("div");
+                        productElement.classList.add("product-item");
+                        if (unavailableClass) {
+                            productElement.classList.add(unavailableClass);
+                        }
+                        productElement.innerHTML = `
+                            <a href="${productStock === 0 ? "#" : "/item?code=" + productCode}" class="${productStock === 0 ? "disabled-link" : ""}">
+                                <img class="product-image" src="/product-images/${productImage}" alt="${productName}">
+                                <p class="product-name">${productName}</p>
+                                <p class="product-price">${formatCLP(finalPrice)}</p>
+                                ${discountTag} <!-- Muestra el descuento si existe -->
+                                ${unavailableTag} <!-- Muestra el mensaje si el producto no tiene stock -->
+                            </a>
+                        `;
+
+                        // Agregar al contenedor de productos
+                        productList.appendChild(productElement);
+                    });
+                } else {
+                    productList.innerHTML = `<p>No hay productos con descuento en este momento.</p>`;
+                }
+            } catch (error) {
+                console.error("Error al cargar productos:", error);
+            }
+        }
+    
+        // Cargar los productos cuando la página se cargue
+        document.addEventListener("DOMContentLoaded", loadProductsByCategory);
+    </script>
+</body>
+</html>
