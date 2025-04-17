@@ -33,18 +33,35 @@ html, body, .main-products {
 
 
 /*----------------------------NAV--------------------*/
-.logo {
-    max-height: 50px; /* Ajusta el tamaño del logo */
-    margin-right: 1200px;
-}
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; 
+    padding: 10px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  
+  .logo {
+    max-height: 50px;
+    height: auto;
+    width: auto;
+    display: block;
+  }
 
 .menu-toggle-btn {
-    border: none;
     background: none;
+    border: none;
     font-size: 1.5rem;
-    cursor: pointer;
-    margin-left: 20px;
-}
+    color: #333;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    transition: transform 0.2s ease;
+  }
 
 .icon-user, .icon-cart {
     font-size: 1.5rem;
@@ -54,7 +71,7 @@ html, body, .main-products {
 /* Barra de navegación */
 .navbar {
     padding: 1px;
-    background-image: linear-gradient(to right, #fc899a, #ecc3c9);
+    background-image: linear-gradient(to right, #A7C7E7, #b8d2ec);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -64,19 +81,20 @@ html, body, .main-products {
     
 }
 
-.image-center {
-    margin-top: 210px;
-    flex-wrap: wrap;
+.image-center img {
+    width: 10%; 
+    height: auto; 
+    max-width: 50%; 
+  
+    
 }
+
 
 /* Contenedor para el logo y el menú */
 nav > a {
     display: flex;
     align-items: center;
 }
-
-
-
 /* Contenedor para los iconos de usuario y carrito */
 .nav-right {
     display: flex;
@@ -289,7 +307,7 @@ section {
     text-transform: uppercase;
     letter-spacing: 2px;
     margin-bottom: 20px;
-    margin-top: 60px; /* Mover el título hacia abajo */
+    margin-top: 60px; 
 }
 
 /* Asegurarse de que el contenedor del título también tenga espacio adecuado */
@@ -298,7 +316,7 @@ section {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-    padding-top: 30px; /* Asegura que haya espacio en la parte superior */
+    padding-top: 30px; 
 }
 
 /* Estilo para los enlaces de las categorías */
@@ -312,15 +330,15 @@ section {
     width: 100%;
     text-align: left;
     transition: color 0.3s ease, background-color 0.3s ease;
-    border-radius: 12px; /* Bordes más suaves */
+    border-radius: 12px; 
     margin: 5px 0;
     font-family: 'Verdana', sans-serif;
 }
 
 /* Estilo de los iconos */
 .sidebar-link i {
-    margin-right: 10px; /* Espacio entre el icono y el texto */
-    font-size: 20px; /* Tamaño del icono */
+    margin-right: 10px; 
+    font-size: 20px; 
 }
 
 /* Efecto hover en los enlaces */
@@ -332,7 +350,7 @@ section {
 /* Estilo para las categorías especiales */
 .upcoming-category {
     font-weight: bold;
-    color: #f0b0b9; /* Rosa brillante */
+    color: #f0b0b9; 
 }
 
 .discount-category {
@@ -357,7 +375,7 @@ section {
 /* --------------CART--------------- */
 #cart {
     position: fixed;
-    right: -400px; /* Oculto por defecto */
+    right: -400px; 
     top: 0;
     width: 350px;
     height: 100%;
@@ -374,7 +392,7 @@ section {
 
 /* Mostrar el carrito */
 #cart.show-cart {
-    right: 0; /* Desliza el carrito hacia dentro */
+    right: 0; 
 }
 
 /* Mostrar el overlay */
@@ -556,13 +574,13 @@ section {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 999; /* Por encima del overlay */
+    z-index: 999; 
     background: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     padding: 30px;
     width: 400px;
-    display: none; /* Oculto por defecto */
+    display: none; 
 }
 
 
@@ -625,16 +643,16 @@ section {
 
 /* Barra con texto desplazándose */
 .custom-moving-navbar {
-    background-color: #ffe97a;  
-    padding: 8px 0;            /* Mantiene el espacio interno */
+    background-color: #FFF4B1;  
+    padding: 8px 0;            
     position: relative;
     overflow: hidden;  
-    width: 100vw;              /* Usa el 100% del ancho de la ventana */
-    left: 0;                   /* Asegúrate de que comience desde el borde izquierdo */
-    box-sizing: border-box;    /* Incluye el padding en el cálculo del ancho */
-    margin: 0;                 /* Elimina cualquier margen exterior */
-    border-top: none;          /* Asegura que no haya un borde superior */
-    top: 0;                    /* Asegura que no haya desplazamiento vertical */
+    width: 100vw;              
+    left: 0;                   
+    box-sizing: border-box;    
+    margin: 0;                 
+    border-top: none;          
+    top: 0;                    
 }
 
 
@@ -660,5 +678,43 @@ section {
 }
 
 
+/* Extra pequeñas (teléfonos, menos de 400px) */
+@media (max-width: 400px) {
+    body {
+        font-size: 14px;
+    }
 
+    .logo {
+        margin-right: 10px;
+        max-height: 40px;
+    }
 
+    .nav-right {
+        margin-right: 10px;
+        gap: 10px;
+    }
+
+    .sidebar-link {
+        font-size: 13px;
+    }
+
+    #login-modal {
+        width: 90%; 
+    }
+
+    .moving-text {
+        font-size: 14px;
+    }
+
+    footer {
+        padding: 30px;
+    }
+
+    #sidebar {
+        width: 80vw;
+    }
+
+    #cart {
+        width: 100vw;
+    }
+}

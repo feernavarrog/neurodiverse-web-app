@@ -1,46 +1,101 @@
+/* Evitar que la página se estire más allá de 100% del ancho del navegador */
+html, body {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 100%;  
+}
 
-/* Estilos para la cabecera de administración */
+/* Contenedor principal de la página */
+.admin-container {
+    width: 100%;
+    max-width: 1400px; 
+    margin: 0 auto; 
+    padding: 0 20px; 
+    box-sizing: border-box; 
+    min-height: 100vh; 
+}
+
+/* Cabecera de la página */
 .admin-header {
     text-align: center;
-    margin: 40px auto; 
+    font-size: 1.8rem;
+    margin-top: 50px;  
 }
 
-/* Estilos para la lista de enlaces de administración */
+/* Lista de enlaces de administración */
 .admin-menu {
-    list-style-type: none; 
+    list-style-type: none;
     padding: 0;
-    margin: 0;
+    margin: 20px auto; 
     display: flex;
-    flex-direction: column; 
-    gap: 15px; 
-    margin-left: 100px;
-    margin-bottom: 130px;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 100px;
+    
+    
 }
 
-.admin-menu li {
-    margin: 0; 
-}
-
+/* Enlaces de la lista de administración */
 .admin-menu li a {
-    text-decoration: none; 
+    margin-top: 20px;
+    text-decoration: none;
     color: #444;
-    font-size: 1.1rem; 
-    font-weight: 600; 
+    font-size: 1.4rem;
+    font-weight: 600;
     display: flex;
-    align-items: center; 
-    gap: 10px; 
-    padding: 12px 0; 
-    transition: color 0.3s ease, transform 0.3s ease; 
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .admin-menu li a:hover {
-    color: #ecc3c9; 
-    transform: translateX(5px); 
+    color: #ecc3c9;
+    transform: translateX(5px);
 }
 
+/* Línea divisoria */
 hr {
     border: 0;
     height: 1px;
-    background-color: #ddd; 
+    background-color: #ddd;
     margin-top: 20px;
+}
+
+/* Responsividad: Ajustes para pantallas pequeñas */
+@media (max-width: 1200px) {
+    .admin-container {
+        padding: 0 10px;
+    }
+
+    .admin-header {
+        font-size: 1.5rem;
+    }
+
+    .admin-menu li a {
+        font-size: 1rem;
+    }
+}
+
+/* Responsividad: Ajustes para pantallas muy pequeñas (móviles) */
+@media (max-width: 768px) {
+    .admin-container {
+        padding: 0 15px;
+    }
+
+    .admin-header {
+        font-size: 1.3rem;
+    }
+
+    .admin-menu {
+        margin-top: 50px;
+    }
+
+    .admin-menu li a {
+        font-size: 0.9rem;
+        padding: 10px 0;
+    }
 }

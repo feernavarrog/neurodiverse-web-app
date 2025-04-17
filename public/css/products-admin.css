@@ -450,8 +450,8 @@ hr {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Fondo oscuro semi-transparente */
-    z-index: 999; /* Asegura que esté por encima del resto */
+    background: rgba(0, 0, 0, 0.6); 
+    z-index: 999; 
 }
 
 /* Contenido del modal */
