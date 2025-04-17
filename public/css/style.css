@@ -33,8 +33,9 @@ html, body, .main-products {
 
 
 /*----------------------------NAV--------------------*/
+
 .logo {
-    max-height: 50px; /* Ajusta el tamaño del logo */
+    max-height: 50px; 
     margin-right: 1200px;
 }
 
@@ -54,7 +55,7 @@ html, body, .main-products {
 /* Barra de navegación */
 .navbar {
     padding: 1px;
-    background-image: linear-gradient(to right, #fc899a, #ecc3c9);
+    background-image: linear-gradient(to right, #A7C7E7, #b8d2ec);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -64,19 +65,20 @@ html, body, .main-products {
     
 }
 
-.image-center {
-    margin-top: 210px;
-    flex-wrap: wrap;
+.image-center img {
+    width: 10%; 
+    height: auto; 
+    max-width: 50%; 
+  
+    
 }
+
 
 /* Contenedor para el logo y el menú */
 nav > a {
     display: flex;
     align-items: center;
 }
-
-
-
 /* Contenedor para los iconos de usuario y carrito */
 .nav-right {
     display: flex;
@@ -625,16 +627,16 @@ section {
 
 /* Barra con texto desplazándose */
 .custom-moving-navbar {
-    background-color: #ffe97a;  
-    padding: 8px 0;            /* Mantiene el espacio interno */
+    background-color: #FFF4B1;  
+    padding: 8px 0;            
     position: relative;
     overflow: hidden;  
-    width: 100vw;              /* Usa el 100% del ancho de la ventana */
-    left: 0;                   /* Asegúrate de que comience desde el borde izquierdo */
-    box-sizing: border-box;    /* Incluye el padding en el cálculo del ancho */
-    margin: 0;                 /* Elimina cualquier margen exterior */
-    border-top: none;          /* Asegura que no haya un borde superior */
-    top: 0;                    /* Asegura que no haya desplazamiento vertical */
+    width: 100vw;              
+    left: 0;                   
+    box-sizing: border-box;    
+    margin: 0;                 
+    border-top: none;          
+    top: 0;                    
 }
 
 
@@ -660,5 +662,45 @@ section {
 }
 
 
+/* Extra pequeñas (teléfonos, menos de 400px) */
+@media (max-width: 400px) {
+    body {
+        font-size: 14px;
+    }
+
+    .logo {
+        margin-right: 10px;
+        max-height: 40px;
+    }
+
+    .nav-right {
+        margin-right: 10px;
+        gap: 10px;
+    }
+
+    .sidebar-link {
+        font-size: 13px;
+    }
+
+    #login-modal {
+        width: 90%; /* Modal más estrecho en móviles */
+    }
+
+    .moving-text {
+        font-size: 14px;
+    }
+
+    footer {
+        padding: 30px;
+    }
+
+    #sidebar {
+        width: 80vw;
+    }
+
+    #cart {
+        width: 100vw;
+    }
+}
 
 

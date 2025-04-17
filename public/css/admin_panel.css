@@ -1,46 +1,115 @@
-
 /* Estilos para la cabecera de administración */
 .admin-header {
     text-align: center;
-    margin: 40px auto; 
+    margin: 40px auto;
+    padding: 0 20px;
+    font-size: 1.8rem;
+    max-width: 1400px;
+    margin-top: 100px;
 }
 
 /* Estilos para la lista de enlaces de administración */
 .admin-menu {
-    list-style-type: none; 
+    list-style-type: none;
     padding: 0;
-    margin: 0;
+    margin: 0 auto; /* centrado horizontal */
     display: flex;
-    flex-direction: column; 
-    gap: 15px; 
-    margin-left: 100px;
-    margin-bottom: 130px;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 280px;
+    max-width: 1400px;
+    width: 100%;
+    margin-top: 100px
+
+    
 }
 
-.admin-menu li {
-    margin: 0; 
-}
-
+/* Enlaces */
 .admin-menu li a {
-    text-decoration: none; 
+    text-decoration: none;
     color: #444;
-    font-size: 1.1rem; 
-    font-weight: 600; 
+    font-size: 1.1rem;
+    font-weight: 600;
     display: flex;
-    align-items: center; 
-    gap: 10px; 
-    padding: 12px 0; 
-    transition: color 0.3s ease, transform 0.3s ease; 
+    align-items: center;
+    gap: 10px;
+    padding: 12px 0;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .admin-menu li a:hover {
-    color: #ecc3c9; 
-    transform: translateX(5px); 
+    color: #ecc3c9;
+    transform: translateX(5px);
 }
 
+/* Línea divisoria */
 hr {
     border: 0;
     height: 1px;
-    background-color: #ddd; 
+    background-color: #ddd;
     margin-top: 20px;
+    
 }
+
+/* RESPONSIVIDAD PARA PANTALLAS GRANDES */
+@media (min-width: 1400px) {
+    .admin-menu {
+        flex-direction: row;         
+        flex-wrap: wrap;
+        justify-content: center;     
+        gap: 40px;                  
+    }
+
+    .admin-menu li a {
+        font-size: 1.3rem;
+        padding: 20px 30px;
+    }
+
+    .admin-header {
+        font-size: 1.2rem;
+    }
+}
+@media (min-width: 1400px) {
+    .admin-main {
+      max-width: 1200px;
+      margin: 60px auto;
+    }
+  
+    .admin-title {
+      font-size: 3rem;
+    }
+  
+    .admin-description {
+      font-size: 1.4rem;
+    }
+  
+    .admin-table th,
+    .admin-table td {
+      font-size: 1.05rem;
+      padding: 18px 20px;
+    }
+  
+    .btn-add-product,
+    .custom-btn,
+    .btn-save-product {
+      font-size: 18px;
+      padding: 18px 36px;
+    }
+  
+    .modal-content {
+      max-width: 1000px;
+      padding: 70px;
+    }
+  
+    .discount-modal-content {
+      max-width: 600px;
+      padding: 60px;
+    }
+  
+    #product-form input,
+    #product-form select {
+      font-size: 1rem;
+      padding: 14px;
+    }
+  }
+  

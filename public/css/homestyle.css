@@ -19,7 +19,8 @@ html, body {
     gap: 20px;                   
     flex-wrap: wrap;             
     width: 90%;                  
-    margin: -250px auto 0;       
+    margin: -250px auto 0;    
+    margin-top: -520px;   
 }
 
 /* Estilo para los enlaces (manteniendo las imágenes dentro) */
