@@ -1,0 +1,108 @@
+/* Estilo general para el body y contenido principal */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    width: 90%;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 200px;
+    margin-top: 100px;
+}
+
+/* Título principal */
+h2 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Subtítulo o texto introductorio */
+p {
+    font-size: 1.1rem;
+    color: #666;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Línea horizontal */
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #e1e1e1;
+    margin: 20px 0;
+}
+
+/* Estilo general para las tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+/* Estilo para las cabeceras de las tablas */
+th {
+    background-color:#bacfe5;
+    color: rgb(0, 0, 0);
+    font-size: 1.1rem;
+    padding: 12px;
+    text-align: left;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Estilo para las celdas de la tabla */
+td {
+    background-color: #fff;
+    color: #444;
+    font-size: 1rem;
+    padding: 10px;
+    text-align: left;
+    border-top: 1px solid #e1e1e1;
+    border-bottom: 1px solid #e1e1e1;
+    border-radius: 0 0 8px 8px;
+}
+
+/* Estilo para las filas de la tabla */
+tr {
+    transition: background-color 0.3s ease;
+}
+
+/* Estilo para las filas de la tabla al pasar el ratón */
+tr:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+/* Estilo para las listas dentro de las celdas */
+ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+ul li {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* Estilo para el estado del pedido */
+td:last-child {
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.enviado {
+    color: #4CAF50; 
+}
+
+.pendiente {
+    color: #FF9800; 
+}

@@ -1,0 +1,139 @@
+body {
+    background: url('/img/background.png') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.registro-container {
+    background: white;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 600px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.registro-titulo {
+    text-align: center;
+    color: #333;
+}
+
+.registro-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+}
+
+.registro-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.registro-input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.registro-subtitulo {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.registro-label {
+    display: block;
+    margin: 5px 0;
+}
+
+.registro-boton {
+    width: 100%;
+    padding: 10px;
+    background-color: #ecc3c9;
+    border: none;
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.registro-boton:hover {
+    background-color: #ffe97a;
+}
+
+/* Estilo para el título */
+.coming-soon-title {
+    color: #333;
+    font-size: 3em;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: fadeInEffect 2s ease-in-out;
+    margin-top: 50px;
+}
+
+/* Contenedor de las imágenes */
+.images-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    animation: slideUpEffect 2s ease-in-out;
+}
+
+/* Estilos para las imágenes */
+.coming-soon-image {
+    width: 300px;
+    height: 300px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+}
+
+/* Efecto hover para las imágenes */
+.coming-soon-image:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Animación de desvanecimiento para el título */
+@keyframes fadeInEffect {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animación para el contenedor de las imágenes */
+@keyframes slideUpEffect {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 768px) {
+    .registro-form {
+        grid-template-columns: 1fr;
+    }
+}

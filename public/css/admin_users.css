@@ -1,0 +1,136 @@
+
+.admin-users-main {
+    width: 90%;
+    margin: 40px auto; 
+    background-color: white;
+    padding: 30px;
+    border-radius: 16px; 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); 
+}
+
+/* Título principal */
+.admin-users-title {
+    font-size: 1.2rem;
+    color: #7f8c8d; 
+    text-align: center;
+    margin-bottom: 30px;
+
+}
+
+/* Subtítulo o texto introductorio */
+.admin-users-description {
+    font-size: 1.2rem;
+    color: #555;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Línea horizontal */
+.admin-users-divider {
+    border: 0;
+    height: 1px;
+    background-color: #dcdfe6; 
+    margin: 30px 0;
+}
+
+/* Estilo general para las tablas */
+.admin-users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+    border-radius: 12px;
+    overflow: hidden;
+    
+}
+
+/* Estilo para las cabeceras de las tablas */
+.admin-users-table th {
+    background-color: #BACFE5; 
+    color: rgb(0, 0, 0);
+    font-size: 1.1rem;
+    padding: 16px;
+    text-align: left;
+}
+
+/* Estilo para las celdas de la tabla */
+.admin-users-table td {
+    padding: 14px 16px;
+    color: #555;
+    font-size: 1rem;
+    border-bottom: 1px solid #eaecef;
+}
+
+.admin-users-table tr:hover {
+    background-color: #f8f9fc; 
+}
+
+/* Botones de acción - Estilo moderno */
+.admin-user-btn-deactivate,
+.admin-user-btn-delete {
+    background-color: #CDE7C7; /* Verde */
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+/* Efecto al pasar el cursor */
+.admin-user-btn-deactivate:hover,
+.admin-user-btn-delete:hover {
+    background-color: #BACFE5;
+    box-shadow: 0 6px 16px rgba(74, 144, 226, 0.3);
+}
+
+/* Botón para desactivar usuario */
+.admin-user-btn-deactivate {
+    background: linear-gradient(135deg, #CDE7C7, #81e06b);
+    color: #2c3e50;
+}
+
+/* Botón para eliminar usuario */
+.admin-user-btn-delete {
+    background: linear-gradient(135deg, #ff6b6b, #ff0015);
+    color: rgb(0, 0, 0);
+}
+
+/* Botón de restaurar o activar usuario */
+.admin-user-btn-activate {
+    background: linear-gradient(135deg, #CDE7C7, #81e06b);
+    color: rgb(0, 0, 0);
+}
+
+
+
+/* Estilo para usuarios activos e inactivos */
+.active-1 {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+}
+
+.active-0 {
+    background: rgba(128, 128, 128, 0.5);
+    backdrop-filter: blur(8px);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-users-main {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .admin-users-title {
+        font-size: 2rem;
+    }
+
+    .admin-users-table {
+        font-size: 0.9rem;
+    }
+
+    .admin-users-btn {
+        padding: 8px 12px;
+    }
+}

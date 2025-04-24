@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - NeuroDiverse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/homestyle.css" />
+    <link rel="stylesheet" href="/css/checkout.css" />
+    <link rel="stylesheet" href="/css/popupstyles.css" />
+    <link rel="stylesheet" href="/css/resgistrostyle.css" />
+</head>
+<body>
+    <%- include('partials/first-nav') %> 
+    <%- include('partials/navbar') %>
+    <%- include('partials/sidebar') %>
+    <%- include('partials/cart') %>
+    <%- include('partials/login-modal') %>
+    <%- include('partials/popups') %>
+
+    <!-- Contenido principal -->
+    <main>
+        <h2>Checkout</h2>
+        <hr>
+
+        <!-- Sección donde se mostrarán los productos del carrito -->
+        <div id="checkout-items">
+            <!-- Los productos serán insertados dinámicamente desde sessionStorage -->
+        </div>
+        <div id="order-summary">
+            <h3>Resumen del Pedido</h3>
+            <p>Subtotal: <span id="subtotal">$0</span></p>
+            <p>Gasto de envío: <span id="shipping-cost">$3.000</span></p>
+            <p>Total: <span id="total">$0</span></p>
+        </div>
+        <hr>
+
+        <!-- Formulario de datos del usuario -->
+        <h3>Confirma tus datos:</h3>
+        <div class="checkout-form">
+            <div class="mb-1">
+            <input type="text" id="first-name" placeholder="Nombre" required>
+            <p id="first-name-error" class="error-message"></p>
+            </div>
+
+            <div class="mb-1">
+            <input type="text" id="last-name" placeholder="Apellido" required>
+            <p id="last-name-error" class="error-message"></p>
+            </div>
+
+            <div class="mb-1">
+            <input type="text" id="email" placeholder="Correo Electrónico" required>
+            <p id="email-error" class="error-message"></p>
+            </div>
+            
+            <div class="mb-1">
+                <select id="city" class="registro-input" required>
+                    <option value="" selected disabled>Selecciona tu comuna</option>
+                    <option value="Cerrillos">Cerrillos</option>
+                    <option value="Cerro Navia">Cerro Navia</option>
+                    <option value="Conchali">Conchalí</option>
+                    <option value="El Bosque">El Bosque</option>
+                    <option value="Estacion Central">Estación Central</option>
+                    <option value="Huechuraba">Huechuraba</option>
+                    <option value="Independencia">Independencia</option>
+                    <option value="La Cisterna">La Cisterna</option>
+                    <option value="La Florida">La Florida</option>
+                    <option value="La Granja">La Granja</option>
+                    <option value="La Pintana">La Pintana</option>
+                    <option value="La Reina">La Reina</option>
+                    <option value="Las Condes">Las Condes</option>
+                    <option value="Lo Barnechea">Lo Barnechea</option>
+                    <option value="Lo Espejo">Lo Espejo</option>
+                    <option value="Lo Prado">Lo Prado</option>
+                    <option value="Macul">Macul</option>
+                    <option value="Maipu">Maipú</option>
+                    <option value="Ñuñoa">Ñuñoa</option>
+                    <option value="Pedro Aguirre Cerda">Pedro Aguirre Cerda</option>
+                    <option value="Peñalolen">Peñalolén</option>
+                    <option value="Providencia">Providencia</option>
+                    <option value="Pudahuel">Pudahuel</option>
+                    <option value="Puente Alto">Puente Alto</option>
+                    <option value="Quilicura">Quilicura</option>
+                    <option value="Quinta Normal">Quinta Normal</option>
+                    <option value="Recoleta">Recoleta</option>
+                    <option value="Renca">Renca</option>
+                    <option value="San Bernardo">San Bernardo</option>
+                    <option value="San Joaquin">San Joaquín</option>
+                    <option value="San Jose de Maipo">San José de Maipo</option>
+                    <option value="San Miguel">San Miguel</option>
+                    <option value="San Ramon">San Ramón</option>
+                    <option value="Santiago Centro">Santiago Centro</option>
+                    <option value="Vitacura">Vitacura</option>
+                </select>
+            <!---<input type="text" id="city" placeholder="Comuna" required>--->
+            <p id="city-error" class="error-message"></p>
+            </div>
+
+            <div class="mb-1">
+            <input type="text" id="street" placeholder="Calle" required>
+            <p id="street-error" class="error-message"></p>
+            </div>
+            
+            <div class="mb-1">
+            <input type="text" id="street-number" placeholder="Número" required>
+            <p id="street-number-error" class="error-message"></p>
+            </div>
+            
+            <div class="mb-1">
+            <input type="text" id="mobile-phone" placeholder="Teléfono/Móvil" required>
+            <p id="mobile-phone-error" class="error-message"></p>
+            </div>
+
+            <input type="text" id="additional-info" placeholder="Información adicional">
+        </div>
+        <hr>
+        <button class="pay-btn" id="process-payment">PAGAR</button>
+
+        <hr>
+
+        <!-- Vista de pago Webpay -->
+        <div id="webpay-container" class="webpay-popup">
+            <div class="webpay-popup-content">
+                <img src="/img/webpaylogo.png" alt="Webpay" class="webpay-image">
+                <!-- Botón de cierre -->
+                <button class="close-button" id="close-webpay">✖</button>
+                
+                <!-- Título -->
+                
+                
+                <!-- Formulario de pago -->
+                <div>
+                    <input type="text" id="card-number" placeholder="Número de Tarjeta" required>
+                    <p id="card-number-error" class="error-message"></p>
+
+                    <input type="text" id="card-code" placeholder="Código de Seguridad" required>
+                    <p id="card-code-error" class="error-message"></p>
+
+                    <input type="text" id="card-expiry" placeholder="Fecha de Expiración (MM/AA)" required>
+                    <p id="card-expiry-error" class="error-message"></p>
+                </div>
+                
+                <!-- Botón de pago -->
+                <button id="process-payment" class="btn-pay" onclick="processOrder()">Realizar Pago</button>
+
+            </div>
+        </div>
+
+    </main>
+
+    <%- include('partials/footer') %>
+    <script src="/js/popup.js"></script>
+    <script src="/js/global.js"></script>
+    <script src="/js/crudManager.js"></script>
+    <script src="/js/validation.js"></script>
+    <script>
+        // Función para cargar los productos del carrito en la vista de checkout
+        function loadCheckoutItems() {
+            let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+            let checkoutContainer = document.getElementById('checkout-items');
+            let subtotalContainer = document.getElementById('subtotal');
+            let totalContainer = document.getElementById('total');
+            const shippingCost = 3000;
+            checkoutContainer.innerHTML = ""; // Limpiar contenido previo
+            let subtotal = 0;
+
+            if (cart.length === 0) {
+                checkoutContainer.innerHTML = "<p>No hay productos en el carrito.</p>";
+            } else {
+                cart.forEach(product => {
+                    let productElement = document.createElement('div');
+                    productElement.classList.add("checkout-item");
+                    productElement.innerHTML = `
+                        <img src="${product.image}" alt="${product.name}" class="checkout-image">
+                        <div class="checkout-item-info">
+                            <p>${product.name}</p>
+                            <p>${product.price} x ${product.quantity || 1}</p>
+                        </div>
+                        <button class="remove-checkout-item" data-code="${product.code}" title="Quitar del carrito">
+                        <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                    checkoutContainer.appendChild(productElement);
+                    subtotal += cleanAndConvertCLP(product.price) * (product.quantity || 1);
+                });
+                
+                // Asignar evento a cada botón de quitar
+                document.querySelectorAll(".remove-checkout-item").forEach(btn => {
+                    btn.addEventListener("click", function () {
+                        const code = this.getAttribute("data-code");
+                        removeFromCart(code);       // Elimina desde sessionStorage
+                        loadCheckoutItems();        // Vuelve a cargar productos en checkout
+                    });
+                }); 
+            }
+
+            subtotalContainer.innerText = `${formatCLP(subtotal)}`;
+            totalContainer.innerText = `${formatCLP((subtotal + shippingCost))}`;
+        }
+
+        // Función para poblar los datos del usuario en el formulario desde sessionStorage
+        function loadUserData() {
+            let user = JSON.parse(sessionStorage.getItem('user')) || {};
+            console.log("Usuario recuperado de sessionStorage:", user);
+
+            document.getElementById('first-name').value = user.firstName || "";
+            document.getElementById('last-name').value = user.lastName || "";
+            document.getElementById('email').value = user.email || "";
+            document.getElementById('city').value = user.district || "";
+            document.getElementById('street').value = user.street || "";
+            document.getElementById('street-number').value = user.streetNumber || "";
+            document.getElementById('mobile-phone').value = user.mobilePhone || "";
+            document.getElementById('additional-info').value = user.additionalInfo || "";
+        }
+
+        function openWebpayPopup() {
+    // Obtener los elementos del overlay y el contenedor de Webpay
+    let overlay = document.getElementById('overlay');
+    let webpayContainer = document.getElementById('webpay-container');
+
+            // Validar datos del formulario de checkout
+            let checkOutFields = {
+                "first-name": document.getElementById("first-name").value.trim(),
+                "last-name": document.getElementById("last-name").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                city: document.getElementById("city").value.trim(),
+                street: document.getElementById("street").value.trim(),
+                "street-number": document.getElementById("street-number").value.trim(),
+                "mobile-phone": document.getElementById("mobile-phone").value.trim(),
+                additional_info: document.getElementById("additional-info").value.trim(),
+            };
+
+            // Validar los datos del checkout antes de procesar la orden
+            const errors = validateCheckoutForm(checkOutFields);
+            const cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+
+            // Validar que haya productos en el checkout
+            if (cart.length === 0) {
+                showPopup("⚠️ No hay productos en el carrito.");
+                return;
+            }
+
+            if (Object.keys(errors).length > 0) {
+                displayErrors(errors);
+                return;
+            }else{
+                overlay.style.display = "block";  
+                webpayContainer.style.display = "flex"; 
+            }
+        }
+
+        document.getElementById('close-webpay').addEventListener('click', function() {
+    let overlay = document.getElementById('overlay');
+    let webpayContainer = document.getElementById('webpay-container');
+    
+    if (overlay && webpayContainer) {
+        overlay.style.display = "none";  // Ocultar el fondo difuso
+        webpayContainer.style.display = "none";  // Ocultar el contenedor de Webpay
+    }
+})
+
+
+        // Mostrar mensajes de error en el formulario
+        function displayErrors(errors) {
+            // Limpiar mensajes de error previos
+            document.querySelectorAll(".error-message").forEach(msg => msg.textContent = "");
+            document.querySelectorAll("input").forEach(input => input.classList.remove("error"));
+
+            for (const field in errors) {
+                const inputField = document.getElementById(field);
+                const errorMessage = document.getElementById(`${field}-error`);
+
+                if (inputField) {
+                    inputField.classList.add("error");
+                }
+
+                if (errorMessage) {
+                    errorMessage.textContent = errors[field];
+                    errorMessage.style.color = "red";
+                }
+            }
+        }
+
+        async function processOrder() {
+            let user = JSON.parse(sessionStorage.getItem('user')) || {};
+            let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+            let subtotal = cleanAndConvertCLP(document.getElementById('subtotal').innerText);
+            let total = cleanAndConvertCLP(document.getElementById('total').innerText);
+            let shippingAddress = `${document.getElementById('city').value}, ${document.getElementById('street').value} ${document.getElementById('street-number').value}`;
+            let cardNumber = document.getElementById('card-number').value;
+            let cardLastFour = cardNumber.slice(-4);
+
+            if (user.role === "admin") {
+                showPopup("⚠️ Debes iniciar sesión como cliente para procesar una orden.");
+                return;
+            }
+
+            if (!user.userId) {
+                showPopup("⚠️ Debes ingresar con tu cuenta para procesar una orden.");
+                return;
+            }
+
+            // Validar datos del formulario de pago antes de procesar la orden 
+            const webpayData = {
+                "card-number": document.getElementById("card-number").value.trim(),
+                "card-code": document.getElementById("card-code").value.trim(),
+                "card-expiry": document.getElementById("card-expiry").value.trim()
+            };
+
+            const errors = validateWebpayForm(webpayData);
+
+            if (Object.keys(errors).length > 0) {
+                displayErrors(errors);
+                return;
+            }
+
+            // Verificar stock de cada producto antes de procesar la orden
+            for (const product of cart) {
+                if (!product.id) continue; // Saltar productos sin ID
+                
+                let productData = await fetchProducts({ column: "product_id", value: product.id });
+
+                if (!productData.rows || productData.rows.length === 0) {
+                    showPopup(`El producto con ID ${product.id} no existe en la base de datos.`);
+                    return; // Detiene la orden si el producto no existe
+                }
+
+                let productStock = parseInt(productData.rows[0][6] || "0", 10); // Índice 6 es stock
+
+                if (productStock <= 0) {
+                    showPopup(`⚠️ El producto "${product.name}" no tiene stock disponible. Por favor, quitar de la lista.`);
+                    return; // Detiene la orden si no hay stock
+                }
+            }
+
+            let orderData = {
+                subtotal: subtotal,
+                shipping_address: shippingAddress,
+                total: total,
+                status: "pendiente",
+                card_last_four: cardLastFour,
+                user_id: user.userId, // Corrección en la clave correcta
+                order_date: null,
+                active: 1
+            };
+
+            console.log("Datos de la orden a enviar:", orderData);
+
+            let createdOrder = await createOrder(orderData);
+            let orders = await fetchOrders({ column: "rut", value: user.rut });
+            let lastOrderId = orders.rows[0][0];
+            
+            let orderProducts = cart
+                .filter(product => product.id) // Filtramos productos sin ID
+                .map(product => ({
+                    order_id: lastOrderId,
+                    product_id: product.id,
+                    quantity: product.quantity || 1
+                }));
+            
+            console.log("Productos a asociar con la orden:", orderProducts);
+
+            for (const orderProduct of orderProducts) {
+                await addProductToOrder(orderProduct.order_id, orderProduct.product_id, orderProduct.quantity);
+            }
+
+            sessionStorage.removeItem('cart');
+            showPopup("Orden procesada correctamente.");
+            window.location.href = '/';
+        }
+
+        // Ejecutar las funciones al cargar la vista
+        document.addEventListener("DOMContentLoaded", function() {
+            
+            loadCheckoutItems();
+            loadUserData();
+
+            // Asignar eventos para el botón de pago
+            const processPaymentBtn = document.getElementById('process-payment');
+            if (processPaymentBtn) {
+                processPaymentBtn.addEventListener('click', openWebpayPopup);
+            }
+
+            const closeWebpayBtn = document.getElementById('close-webpay');
+            if (closeWebpayBtn) {
+                closeWebpayBtn.addEventListener('click', closeWebpayPopup);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!-- test_condition.ejs -->
+
+<fieldset>
+    <legend>Gestión de Patologías</legend>
+    
+    <!-- Tabla de Patologías -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="conditionTableBody">
+            <!-- Las patologías se insertarán aquí dinámicamente -->
+        </tbody>
+    </table>
+    <button onclick="loadConditions()">Cargar Patologías</button>
+
+    <!-- Formulario de Patología -->
+    <fieldset>
+        <legend>Formulario de Patología</legend>
+        <label>ID:</label> <input type="text" id="conditionIdInput" disabled><br>
+        <label>Nombre:</label> <input type="text" id="conditionNameInput"><br>
+        <button onclick="saveCondition()">Guardar Patología</button>
+    </fieldset>
+</fieldset>
+
+<script>
+    async function loadConditions() {
+        const response = await fetchConditions();
+        console.log("Respuesta de fetchConditions:", response);
+        
+        const conditions = response.rows || [];
+        const tableBody = document.getElementById('conditionTableBody');
+        tableBody.innerHTML = '';
+        
+        conditions.forEach(condition => {
+            const row = `<tr>
+                <td>${condition[0]}</td>
+                <td>${condition[1]}</td>
+                <td>
+                    <button onclick="editCondition(${condition[0]}, '${condition[1]}')">Editar</button>
+                    <button onclick="deleteCondition(${condition[0]})">Eliminar</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    function editCondition(id, name) {
+        document.getElementById('conditionIdInput').value = id;
+        document.getElementById('conditionNameInput').value = name;
+    }
+
+    async function saveCondition() {
+        const condition = {
+            condition_id: document.getElementById('conditionIdInput').value || null,
+            condition_name: document.getElementById('conditionNameInput').value
+        };
+        
+        if (condition.condition_id) {
+            await updateCondition(condition);
+        } else {
+            await createCondition(condition);
+        }
+        
+        showPopup("Patología guardada correctamente.");
+        loadConditions();
+    }
+</script>

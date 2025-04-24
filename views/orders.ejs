@@ -1,0 +1,121 @@
+<!-- views/orders.ejs (Versión actualizada con imágenes corregidas) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pedidos - NeuroDiverse</title>
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/homestyle.css" />
+  <link rel="stylesheet" href="/css/orderstyle.css" />
+  <link rel="stylesheet" href="/css/popupstyles.css" />
+</head>
+<body>
+    <%- include('partials/first-nav') %>
+    <%- include('partials/navbar') %>
+    <%- include('partials/sidebar') %>
+    <%- include('partials/cart') %>
+    <%- include('partials/login-modal') %>
+    <%- include('partials/popups') %>
+    
+    <!-- Contenido principal -->
+    <main>
+        <h2>Mis Compras</h2>
+        <p>Aquí puedes ver tus pedidos realizados.</p>
+        <hr>
+        
+        <!-- Tabla de pedidos -->
+        <table id="orders-table" border="1">
+            <thead>
+                <tr>
+                    <th>Nro Pedido</th>
+                    <th>Fecha Pedido</th>
+                    <th>Productos</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Los datos se generarán dinámicamente -->
+            </tbody>
+        </table>
+    </main>
+    <%- include('partials/first-nav') %>
+    <%- include('partials/footer') %>
+    <script src="/js/popup.js"></script>
+    <script src="/js/crudManager.js"></script>
+    <script src="/js/global.js"></script>
+    
+
+    <script>
+        // Función para cargar pedidos desde la base de datos usando crudManager
+        async function loadOrders() {
+            let user = JSON.parse(sessionStorage.getItem('user')) || {};
+            let userId = user.userId;
+    
+            if (!userId) {
+                showPopup("⚠️ No se pudo identificar al usuario.");
+                return;
+            }
+    
+            try {
+                // Obtener las órdenes del usuario
+                const ordersResponse = await fetchOrders({ column: "o.user_id", value: userId });
+                console.log("Pedidos:", ordersResponse);
+                if (!ordersResponse.rows || ordersResponse.rows.length === 0) {
+                    document.querySelector("#orders-table tbody").innerHTML = "<tr><td colspan='5'>No tienes pedidos.</td></tr>";
+                    return;
+                }
+    
+                let tableBody = document.querySelector("#orders-table tbody");
+                tableBody.innerHTML = "";
+    
+                for (const order of ordersResponse.rows) {
+                    let orderId = order[0];
+                    let orderDate = order[7];
+                    let total = order[3];
+                    let status = order[4];
+    
+                    // Obtener los productos asociados a cada orden
+                    const productsResponse = await fetchOrderProducts(orderId);
+                    let productList = "<ul>";
+                    productsResponse.rows.forEach(product => {
+                        productList += `
+                            <li>
+                                <img src="/product-images/${product[7]}" alt="${product[2]}" style="width: 50px; height: 50px; margin-right: 10px;"> 
+                                ${product[1]} - ${product[2]} - ${formatCLP(product[4])} - ${product[12]}
+                            </li>`;
+                    });
+                    productList += "</ul>";
+    
+                    let row = `
+                        <tr>
+                            <td>${orderId}</td>
+                            <td>${formatDate(orderDate)}</td>
+                            <td>${productList}</td>
+                            <td>${formatCLP(total)}</td>
+                            <td>${status}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                }
+    
+            } catch (error) {
+                console.error("⚠️ Error al cargar pedidos:", error);
+                showPopup("⚠️ Hubo un error al obtener los pedidos. Inténtalo nuevamente.");
+            }
+        }
+        // Ejecutar la función al cargar la vista
+        document.addEventListener("DOMContentLoaded", loadOrders);
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!-- views/partials/login-modal.ejs (Versión sin estilos) -->
+<div id="login-modal">
+    <div>
+        <button id="close-login">✖</button>
+        <h3 style="text-align: center; width: 100%;">Iniciar Sesión</h3>
+
+        <div id="login-form">
+            <input type="email" id="login-email" placeholder="Correo electrónico" required>
+            <input type="password" id="login-password" placeholder="Contraseña" required>
+            <button id="login-btn">Iniciar Sesión</button>
+            <p id="login-error" style="color: red; display: none;"></p>
+        </div>
+
+        <h>¿No tienes cuenta?</h>
+        <a href="/register" class="link-register">Regístrate</a>
+
+        <hr>
+        <div id="google-signin-button"></div>
+    </div>
+</div>
+<!-- Cargar scripts -->
+<script src="/js/authManager.js"></script> <!-- Primero cargar funciones de autenticación -->
+<script src="/js/login.js"></script>      <!-- Luego manejar eventos del login -->
+

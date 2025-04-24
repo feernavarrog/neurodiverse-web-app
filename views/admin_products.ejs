@@ -1,0 +1,478 @@
+<!-- admin_products.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testing Usuarios</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/homestyle.css" />
+    <link rel="stylesheet" href="/css/item.css" />
+    <link rel="stylesheet" href="/css/products.css" />
+    <link rel="stylesheet" href="/css/comingsoon.css" />
+    <link rel="stylesheet" href="/css/products-admin.css" />
+    <link rel="stylesheet" href="/css/popupstyles.css" />
+</head>
+<body>
+    <%- include('partials/first-nav') %> 
+    <%- include('partials/navbar') %> 
+    <%- include('partials/sidebar') %> 
+    <%- include('partials/cart') %> 
+    <%- include('partials/login-modal') %>
+    <%- include('partials/popups') %>
+
+    <div class="admin-main">
+    <h1 class="admin-title">Gestión de Productos</h1>
+    <p class="admin-description">Administra los productos de la tienda de manera eficiente.</p>
+    <hr>
+
+    <!-- Botón para agregar un nuevo producto -->
+    <button class="btn-add-product" onclick="openProductModal()">
+        <i class="fas fa-plus"></i> Agregar Nuevo Producto
+    </button>
+
+    <!-- Contenedor de botones -->
+    <div>
+        <!-- Botón para refrescar la lista -->
+        <button class="custom-btn btn-refresh" onclick="loadProducts()">
+            🔄 Refrescar Lista
+        </button>
+    
+        <!-- Botón para aplicar descuentos -->
+        <button class="custom-btn btn-discount" onclick="openDiscountModal()">
+            <i class="fas fa-tags"></i> Aplicar Descuento por Categoría
+        </button>
+    
+        <!-- Botón para generar informes -->
+        <button class="custom-btn btn-report" onclick="openReportWindow()">
+            <i class="fas fa-chart-bar"></i> Generar Informe de Condiciones Clínicas
+        </button>
+    </div>
+    
+
+    <!-- Tabla de Productos -->
+    <table class="admin-table">
+        <thead>
+            <tr class="table-header">
+                <th>ID</th>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Descuento</th>
+                <th>Stock</th>
+                <th>Imagen</th>
+                <th>Marca</th>
+                <th>Categoría</th>
+                <th>Activo</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="productTableBody">
+            <!-- Los productos se insertarán aquí dinámicamente -->
+        </tbody>
+    </table>
+    </div>
+
+    <!-- Modal para el formulario de producto -->
+<div id="product-modal">
+    <div class="modal-content">
+        <button class="close-button" onclick="closeProductModal()">✖</button>
+        <h2 class="admin-title">Gestión de Producto</h2>
+        <p class="admin-description">Llena los datos del producto y guárdalo.</p>
+        <hr>
+
+        <!-- Formulario de Producto dentro del modal -->
+        <form id="product-form">
+            <label>ID:</label> <input type="text" id="productIdInput" disabled><br>
+
+            <label>Código:</label> <input type="text" id="productCodeInput"><br>
+            <p id="productCodeInput-error" class="error-message"></p>
+
+            <label>Nombre:</label> <input type="text" id="productNameInput"><br>
+            <p id="productNameInput-error" class="error-message"></p>
+
+            <label>Descripción:</label> <input type="text" id="productDescriptionInput"><br>
+
+            <label>Precio:</label> <input type="number" id="productPriceInput"><br>
+            <p id="productPriceInput-error" class="error-message"></p>
+
+            <label>Descuento:</label> <input type="number" id="productDiscountInput"><br>
+            <p id="productDiscountInput-error" class="error-message"></p>
+
+            <label>Stock:</label> <input type="number" id="productStockInput"><br>
+            <p id="productStockInput-error" class="error-message"></p>
+
+            <label>Imagen referencial:</label> <input type="file" id="productPhotoInput" accept="image/*" onchange="uploadImage()"><br>
+            <p id="productPhotoInput-error" class="error-message"></p>
+            <img id="productImagePreview" src="" style="max-width: 100px; display: none;"><br>
+
+            <label>Marca:</label> <select id="productBrandIdInput"></select><br>
+            <p id="productBrandIdInput-error" class="error-message"></p>
+
+            <label>Categoría:</label> <select id="productCategoryIdInput"></select><br>
+            <p id="productCategoryIdInput-error" class="error-message"></p>
+
+            <label>Activo:</label> <input type="checkbox" id="productActiveInput"><br>
+
+            <button type="button" class="btn-save-product" onclick="saveProduct()">Guardar Producto</button>
+
+        </form>
+    </div>
+</div>
+    
+    <!-- Modal para aplicar descuento por categoría -->
+    <div id="discount-modal" class="discount-modal-overlay">
+        <div class="discount-modal-content">
+            <button class="discount-close-button" onclick="closeDiscountModal()">✖</button>
+            
+            <h2 class="discount-modal-title">Aplicar Descuento por Categoría</h2>
+            <p class="discount-modal-description">Selecciona una categoría e ingresa el porcentaje de descuento.</p>
+    
+            <!-- Formulario dentro del modal -->
+            <form id="discount-form">
+                <label for="discountCategorySelect" class="discount-label">Categoría:</label>
+                <select id="discountCategorySelect" class="discount-select"></select>
+                <p id="discountCategorySelect-error" class="discount-error-message"></p>
+    
+                <label for="discountValueInput" class="discount-label">Descuento (%):</label>
+                <input type="number" id="discountValueInput" class="discount-input" min="0" max="100">
+                <p id="discountValueInput-error" class="discount-error-message"></p>
+    
+                <button type="button" class="discount-apply-button" onclick="applyDiscount()">Aplicar Descuento</button>
+            </form>
+        </div>
+    </div>
+    
+
+<script src="/js/popup.js"></script>
+<script src="/js/crudManager.js"></script>
+<script src="/js/reportManager.js"></script>
+<script src="/js/global.js"></script>
+<script src="/js/validation.js"></script>
+
+<script>
+    // Función para abrir el modal vacío (Agregar Producto)
+    function openProductModal() {
+        document.getElementById('product-form').reset();
+        document.getElementById('productImagePreview').style.display = "none";
+        document.getElementById('product-modal').style.display = "flex";
+    }
+
+    // Función para cerrar el modal
+    function closeProductModal() {
+        document.getElementById('product-modal').style.display = "none";
+    }
+
+    function openDiscountModal() {
+        document.getElementById('discount-form').reset();
+        document.getElementById('discount-modal').style.display = "flex";
+
+        // Limpiar mensajes de error previos
+        document.querySelectorAll(".error-message").forEach(msg => msg.textContent = "");
+        document.querySelectorAll(".registro-input").forEach(input => input.classList.remove("error"));
+
+        // Recargar las categorías disponibles
+        loadBrandsAndCategories();
+    }
+
+    function closeDiscountModal() {
+        document.getElementById('discount-modal').style.display = "none";
+    }
+
+    async function loadProducts() {
+        const response = await fetchProducts();
+        console.log("Respuesta de fetchProducts:", response);
+        
+        const products = response.rows || [];
+        const tableBody = document.getElementById('productTableBody');
+        tableBody.innerHTML = '';
+        
+        products.forEach(product => {
+            const row = `<tr>
+                <td>${product[0]}</td>
+                <td>${product[1]}</td>
+                <td>${product[2]}</td>
+                <td>${product[3]}</td>
+                <td>${formatCLP(product[4])}</td>
+                <td>${product[5]}%</td>
+                <td>${product[6]} uni.</td>
+                <td><img src="/product-images/${product[7]}" style="max-width: 100px;"></td>
+                <td>${product[11]}</td>
+                <td>${product[12]}</td>
+                <td>${product[10] === 1 ? 'Sí' : 'No'}</td>
+                <td>
+                    <button class="btn-edit" 
+                        onclick="editProduct(${product[0]}, '${product[1]}', '${product[2]}', '${product[3]}', ${product[4]}, ${product[5]}, ${product[6]}, '${product[7]}', ${product[8]}, ${product[9]}, ${product[10]})">
+                        ✏️ Editar
+                    </button>
+
+                    <button class="btn-delete" 
+                        onclick="deleteProduct(${product[0]}, '${product[7]}')">
+                        🗑️ Eliminar
+                    </button>
+                </td>
+
+
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // Mostrar mensajes de error en el formulario
+    function displayErrors(errors) {
+        // Limpiar mensajes de error previos
+        document.querySelectorAll(".error-message").forEach(msg => msg.textContent = "");
+        document.querySelectorAll(".registro-input").forEach(input => input.classList.remove("error"));
+
+        for (const field in errors) {
+            const inputField = document.getElementById(field);
+            const errorMessage = document.getElementById(`${field}-error`);
+
+            if (inputField) {
+                inputField.classList.add("error");
+            }
+
+            if (errorMessage) {
+                errorMessage.textContent = errors[field];
+                errorMessage.style.color = "red";
+            }
+        }
+    }
+
+    async function saveProduct() {
+    const product = {
+        product_id: document.getElementById('productIdInput').value || null,
+        code: document.getElementById('productCodeInput').value.trim(),
+        product_name: document.getElementById('productNameInput').value.trim(),
+        product_description: document.getElementById('productDescriptionInput').value.trim(),
+        price: document.getElementById('productPriceInput').value.trim(),
+        discount: document.getElementById('productDiscountInput').value.trim(),
+        stock: document.getElementById('productStockInput').value.trim(),
+        reference_photo: document.getElementById('productImagePreview').src.split("/").pop(),
+        brand_id: document.getElementById('productBrandIdInput').value,
+        category_id: document.getElementById('productCategoryIdInput').value,
+        active: document.getElementById('productActiveInput').checked ? 1 : 0
+    };
+
+    const errors = validateProductForm(product);
+    if (Object.keys(errors).length > 0) {
+        displayErrors(errors);
+        return;
+    }
+
+    try {
+        let response;
+        if (product.product_id) {
+            response = await updateProduct(product);
+        } else {
+            response = await createProduct(product);
+        }
+
+        // Si vino con error
+        if (response.error) {
+            if (response.error.includes('ya existe')) {
+                closeProductModal();
+                loadProducts(); // O puedes mostrarlo en un <div> fijo
+                showPopup(response.error);
+            } else {
+                closeProductModal();
+                loadProducts(); 
+                showPopup('Error inesperado: ' + response.error);
+            }
+            return;
+        }
+
+        showPopup('Producto guardado correctamente.');
+        closeProductModal();
+        loadProducts();
+
+    } catch (err) {
+        console.error('Error en saveProduct:', err);
+        showPopup('Error inesperado en el sistema.');
+    }
+}
+
+    function editProduct(id, code, name, description, price, discount, stock, photo, brandId, categoryId, active) {
+        document.getElementById('productIdInput').value = id;
+        document.getElementById('productCodeInput').value = code;
+        document.getElementById('productNameInput').value = name;
+        document.getElementById('productDescriptionInput').value = description;
+        document.getElementById('productPriceInput').value = price;
+        document.getElementById('productDiscountInput').value = discount;
+        document.getElementById('productStockInput').value = stock;
+        document.getElementById('productImagePreview').src = `/product-images/${photo}`;
+        document.getElementById('productImagePreview').style.display = "block";
+        document.getElementById('productBrandIdInput').value = brandId;
+        document.getElementById('productCategoryIdInput').value = categoryId;
+        document.getElementById('productActiveInput').checked = active === 1;
+
+        if (photo) {
+            document.getElementById('productImagePreview').src = `/product-images/${photo}`;
+            document.getElementById('productImagePreview').style.display = "block";
+        } else {
+            document.getElementById('productImagePreview').style.display = "none";
+        }
+
+        document.getElementById('product-modal').style.display = "flex";
+    }
+
+// Función para eliminar un producto con tu popup personalizado
+function deleteProduct(productId, photo) {
+    // Mostrar tu popup con el mensaje y los botones
+    showPopup(`
+        <p>¿Estás seguro de que deseas eliminar este producto?</p>
+        <div class="popup-actions">
+            <button class="popup-btn popup-confirm" onclick="confirmDelete('${productId}', '${photo}')">Confirmar</button>
+            <button class="popup-btn popup-cancel" onclick="closePopup()">Cancelar</button>
+        </div>
+    `);
+}
+
+        // Función para confirmar y realizar la eliminación
+        function confirmDelete(productId, photo) {
+            closePopup(); // Cierra el popup
+
+            // Ejecuta la solicitud DELETE para eliminar el producto
+            fetch(`/products/delete/${productId}/${photo}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    // Muestra el mensaje de éxito con tu popup
+                    showPopup(`<p>${data.message}</p>`);
+                    
+                    // Elimina la imagen asociada
+                    fetch(`/products/delete-image/${photo}`, { method: 'DELETE' });
+
+                    // Recargar la lista de productos
+                    loadProducts();
+                })
+                .catch(error => {
+                    console.error("Error eliminando el producto:", error);
+                    showPopup(`<p>❌ Error al eliminar el producto.</p>`);
+                });
+        }
+
+    async function loadBrandsAndCategories() {
+        const brands = await fetchBrands();
+        const categories = await fetchCategories();
+        
+        const brandSelect = document.getElementById('productBrandIdInput');
+        const categorySelect = document.getElementById('productCategoryIdInput');
+        const discountCategorySelect = document.getElementById('discountCategorySelect'); // Nuevo selector
+        
+        // Agregar opción vacía al inicio
+    brandSelect.innerHTML = '<option value="" selected disabled>Seleccione una marca</option>';
+    categorySelect.innerHTML = '<option value="" selected disabled>Seleccione una categoría</option>';
+    discountCategorySelect.innerHTML = '<option value="" selected disabled>Seleccione una categoría</option>';
+        
+        brands.rows.forEach(brand => {
+            const option = document.createElement('option');
+            option.value = brand[0];
+            option.textContent = brand[1];
+            brandSelect.appendChild(option);
+        });
+        
+        categories.rows.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category[0];
+            option.textContent = category[1];
+            categorySelect.appendChild(option);
+
+            const discountOption = option.cloneNode(true); // Clonar opción
+            discountCategorySelect.appendChild(discountOption);
+        });
+
+        // Cargar datos al abrir el modal de descuento
+        function openDiscountModal() {
+            document.getElementById('discount-form').reset();
+            document.getElementById('discount-modal').style.display = "flex";
+            loadBrandsAndCategories(); // Cargar categorías al abrir el modal
+        }
+    }
+
+    function uploadImage() {
+        const fileInput = document.getElementById("productPhotoInput");
+        const formData = new FormData();
+        formData.append("productImage", fileInput.files[0]);
+        
+        fetch("/products/upload-image", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("productImagePreview").src = data.imageUrl;
+            document.getElementById("productImagePreview").style.display = "block";
+            document.getElementById("productPhotoInput").dataset.imageUrl = data.imageUrl;
+        })
+        .catch(error => console.error("Error al subir imagen:", error));
+    }
+
+            // Función para aplicar el descuento por categoría
+            function applyDiscount() {
+                // Validar los datos del formulario
+                const errors = validateDiscountForm();
+
+                if (Object.keys(errors).length > 0) {
+                    displayErrors(errors); // Mostrar errores en los campos del formulario
+                    return;
+                }
+
+                // Obtener los valores del formulario
+                const category = document.getElementById('discountCategorySelect').value;
+                const discount = document.getElementById('discountValueInput').value.trim();
+
+                // Mostrar el popup de confirmación con los detalles del descuento
+                showPopup(`
+                    <p>¿Deseas aplicar un <strong>${discount}%</strong> de descuento a la categoría <strong>${category}</strong>?</p>
+                    <div class="popup-actions">
+                        <button class="popup-btn popup-confirm" onclick="confirmApplyDiscount('${category}', '${discount}')">Confirmar</button>
+                        <button class="popup-btn popup-cancel" onclick="closePopup()">Cancelar</button>
+                    </div>
+                `);
+            }
+
+            // Función para confirmar y enviar el descuento al backend
+            function confirmApplyDiscount(category, discount) {
+                closePopup(); // Cerrar el popup de confirmación
+
+                // Enviar solicitud al backend
+                fetch('/products/apply-discount', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category, discount })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showPopup(`<p>❌ Error: ${data.error}</p>`);
+                    } else {
+                        showPopup(`<p>✅ ¡Descuento aplicado correctamente!</p>`);
+                        closeDiscountModal(); // Cerrar el modal de descuento
+                        loadProducts(); // Actualizar la tabla de productos
+                    }
+                })
+                .catch(error => {
+                    console.error("Error aplicando descuento:", error);
+                    showPopup("<p>❌ Ocurrió un error al aplicar el descuento.</p>");
+                });
+            }
+
+    
+    document.addEventListener('DOMContentLoaded', () => {
+    loadBrandsAndCategories();
+    loadProducts(); // Cargar productos automáticamente al iniciar
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Neuroverse Market</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="/css/registrostyle.css" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/resgistrostyle.css" />
+    <link rel="stylesheet" href="/css/popupstyles.css" />
+
+</head>
+
+<body>
+    <%- include('partials/first-nav') %>
+    <%- include('partials/navbar') %>
+    <%- include('partials/sidebar') %>
+    <%- include('partials/cart') %>
+    <%- include('partials/login-modal') %>
+    <%- include('partials/popups') %>
+    <main class="registro-container">
+        <h2 class="registro-titulo">REGISTRARSE</h2>
+        
+        <div class="registro-formulario">
+            <!-- 🔹 Sección: Datos Personales -->
+            <h3 class="registro-subtitulo">Datos Personales</h3>
+            <input type="email" id="email" class="registro-input" placeholder="Correo Electrónico" required>
+            <p id="email-error" class="error-message"></p>
+
+            <input type="password" id="password" class="registro-input" placeholder="Contraseña" required>
+            <p id="password-tip" class="form-tip">Debe tener al menos 12 caracteres, una mayúscula, una minúscula, un número y un símbolo.</p>
+            <p id="password-error" class="error-message"></p>
+
+            <input type="text" id="first-name" class="registro-input" placeholder="Nombre" required>
+            <p id="first-name-error" class="error-message"></p>
+
+            <input type="text" id="last-name" class="registro-input" placeholder="Apellido" required>
+            <p id="last-name-error" class="error-message"></p>
+
+            <label for="birth-date">Fecha de Nacimiento:</label>
+            <input type="date" id="birth-date" class="registro-input" required>
+            <p id="birth-date-error" class="error-message"></p>
+
+            <input type="text" id="mobile-phone" class="registro-input" placeholder="Teléfono/Móvil" required>
+            <p id="mobile-phone-error" class="error-message"></p>
+
+            <hr>
+
+            <!-- 🔹 Sección: Datos para el Envío -->
+            <h3 class="registro-subtitulo">Datos para el Envío</h3>
+            <input type="text" id="rut" class="registro-input" placeholder="RUT (Ej: 12345678-9)" required>
+            <p id="rut-error" class="error-message"></p>
+
+            <p class="registro-info">📌 Por el momento, solo realizamos envíos dentro de la Región Metropolitana.</p>
+
+            <label for="region">Región:</label>
+            <select id="region" class="registro-input" disabled>
+                <option value="Santiago" selected>Región Metropolitana</option>
+            </select>
+
+            <label for="comuna">Comuna:</label>
+            <select id="comuna" class="registro-input" required>
+                <option value="" selected disabled>Selecciona tu comuna</option>
+                <option value="Cerrillos">Cerrillos</option>
+                <option value="Cerro Navia">Cerro Navia</option>
+                <option value="Conchali">Conchalí</option>
+                <option value="El Bosque">El Bosque</option>
+                <option value="Estacion Central">Estación Central</option>
+                <option value="Huechuraba">Huechuraba</option>
+                <option value="Independencia">Independencia</option>
+                <option value="La Cisterna">La Cisterna</option>
+                <option value="La Florida">La Florida</option>
+                <option value="La Granja">La Granja</option>
+                <option value="La Pintana">La Pintana</option>
+                <option value="La Reina">La Reina</option>
+                <option value="Las Condes">Las Condes</option>
+                <option value="Lo Barnechea">Lo Barnechea</option>
+                <option value="Lo Espejo">Lo Espejo</option>
+                <option value="Lo Prado">Lo Prado</option>
+                <option value="Macul">Macul</option>
+                <option value="Maipu">Maipú</option>
+                <option value="Ñuñoa">Ñuñoa</option>
+                <option value="Pedro Aguirre Cerda">Pedro Aguirre Cerda</option>
+                <option value="Peñalolen">Peñalolén</option>
+                <option value="Providencia">Providencia</option>
+                <option value="Pudahuel">Pudahuel</option>
+                <option value="Puente Alto">Puente Alto</option>
+                <option value="Quilicura">Quilicura</option>
+                <option value="Quinta Normal">Quinta Normal</option>
+                <option value="Recoleta">Recoleta</option>
+                <option value="Renca">Renca</option>
+                <option value="San Bernardo">San Bernardo</option>
+                <option value="San Joaquin">San Joaquín</option>
+                <option value="San Jose de Maipo">San José de Maipo</option>
+                <option value="San Miguel">San Miguel</option>
+                <option value="San Ramon">San Ramón</option>
+                <option value="Santiago Centro">Santiago Centro</option>
+                <option value="Vitacura">Vitacura</option>
+            </select>
+            <p id="comuna-error" class="error-message"></p>
+
+            <input type="text" id="street" class="registro-input" placeholder="Calle" required>
+            <p id="street-error" class="error-message"></p>
+
+            <input type="text" id="street-number" class="registro-input" placeholder="Número" required>
+            <p id="street-number-error" class="error-message"></p>
+
+            <input type="text" id="additional-info" class="registro-input" placeholder="Información adicional">
+
+            <hr>
+
+            <!-- 🔹 Sección: Autorización de uso de datos personales -->
+            <div class="alert alert-danger" role="alert">
+                Autorizo el uso de mis datos personales únicamente con fines de mejora del servicio.<br>
+                La información proporcionada no será asociada a mi identidad ni utilizada para otros propósitos. Las condiciones marcadas serán tratadas de forma anónima y confidencial, y como usuario podré desistir en cualquier momento desmarcando opciones desde mi perfil.
+            </div>
+            
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="authorization-checkbox">
+                <label class="form-check-label" for="authorization-checkbox">
+                He leído y acepto el uso de mis datos personales según lo indicado anteriormente.
+                </label>
+                <p id="authorization-error" class="error-message"></p>
+            </div>
+
+            <!-- 🔹 Sección: Patologías -->
+            <h3 class="registro-subtitulo">Patologías</h3>
+            <div id="conditions-container">
+                <!-- Las patologías se cargarán dinámicamente -->
+            </div>
+
+            <button id="register-btn" class="registro-boton">Registrarse</button>
+        </div>
+    </main>
+
+    <script src="/js/popup.js"></script>
+    <script src="/js/crudManager.js"></script>
+    <script src="/js/global.js"></script>
+    <script src="/js/authManager.js"></script>
+    <%- include('partials/footer') %>
+    <script>
+        
+    let originalPasswordHash = null;
+    
+    // 🔹 Obtener el email desde la URL si existe
+    function getEmailFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const emailFromURL = params.get("email");
+        const titleElement = document.querySelector(".registro-titulo");
+
+        if (emailFromURL) {
+            const emailField = document.getElementById("email");
+            const passwordField = document.getElementById("password");
+
+            emailField.value = emailFromURL;
+            emailField.disabled = true; // Deshabilitar el campo de email
+            passwordField.removeAttribute("required"); // Eliminar la validación de campo requerido
+            passwordField.style.display = "none"; // Ocultar el campo de contraseña
+
+            // Cambiar el título cuando el email viene prellenado
+            titleElement.innerText = "Cuéntanos un poco más de ti";
+        }
+    }
+
+    // 🔹 Cargar patologías desde la base de datos usando crudManager
+    async function loadConditions() {
+        const conditionsContainer = document.getElementById("conditions-container");
+        
+        const conditions = await fetchConditions();
+        if (conditions.rows) {
+            conditions.rows.forEach(condition => {
+                const conditionId = condition[0];
+                const conditionName = condition[1];
+                conditionsContainer.innerHTML += `
+                    <label class="registro-label">
+                        <input type="checkbox" class="condition-checkbox" value="${conditionId}"> ${conditionName}
+                    </label>
+                `;
+            });
+        }
+    }
+
+    // 🔹 Mostrar mensajes de error en el formulario
+        function displayErrors(errors) {
+        // Limpiar mensajes de error previos
+        document.querySelectorAll(".error-message").forEach(msg => msg.textContent = "");
+        document.querySelectorAll(".registro-input").forEach(input => input.classList.remove("error"));
+
+        // 📌 Asegurar que el tip de la contraseña se muestra por defecto
+        document.getElementById("password-tip").style.display = "block";
+
+        for (const field in errors) {
+            const inputField = document.getElementById(field);
+            const errorMessage = document.getElementById(`${field}-error`);
+
+            if (inputField) {
+                inputField.classList.add("error");
+            }
+
+            if (errorMessage) {
+                errorMessage.textContent = errors[field];
+                errorMessage.style.color = "red";
+            }
+
+            // Si el error es en la contraseña, ocultar el tip
+            if (field === "password") {
+                document.getElementById("password-tip").style.display = "none";
+            }
+        }
+    }
+
+    // 🔹 Evento para registrar usuario y sus patologías
+    async function registerUser() {
+        const selectedConditions = [...document.querySelectorAll('.condition-checkbox:checked')].map(cb => cb.value);
+        const emailFromURL = new URLSearchParams(window.location.search).get("email");
+        
+        const userData = {
+        rut: document.getElementById("rut").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: emailFromURL ? null : document.getElementById("password").value.trim(),
+        first_name: document.getElementById("first-name").value.trim(),
+        last_name: document.getElementById("last-name").value.trim(),
+        birth_date: document.getElementById("birth-date").value,
+        city: "Santiago",
+        district: document.getElementById("comuna").value,
+        street: document.getElementById("street").value.trim(),
+        street_number: document.getElementById("street-number").value.trim(),
+        mobile_phone: document.getElementById("mobile-phone").value.trim(),
+        additional_address_info: document.getElementById("additional-info").value.trim(),
+        active: 1,
+        user_role: "customer"
+    };
+
+    // 🔹 Validar los datos antes de enviarlos
+    const inputErrors = validateUserForm(userData);
+
+    // 📌 Si hay errores, mostrarlos y detener el registro
+    if (Object.keys(inputErrors).length > 0) {
+        displayErrors(inputErrors);
+        return;
+    }
+
+    // 🔹 Validar si el usuario existe o el rut existe
+    const errors = await validateUserFormAsync(userData); // 👈 usar versión async
+
+    if (Object.keys(errors).length > 0) {
+        displayErrors(errors);
+        return;
+    }
+
+    // Validar si el checkbox de autorización está marcado
+    const authorizationCheckbox = document.getElementById("authorization-checkbox");
+    const authorizationError = document.getElementById("authorization-error");
+
+    if (!authorizationCheckbox.checked) {
+        authorizationError.textContent = "Debes aceptar el uso de tus datos personales para continuar.";
+        authorizationError.style.color = "red";
+        return;
+    } else {
+        authorizationError.textContent = ""; // Limpiar error si está marcado
+    }
+
+    const response = await createUser(userData);
+
+    const userResult = await fetchUsers({ column: "email", value: userData.email });
+
+    // 📌 Verificar si el usuario existe
+    if (response.error) {
+        showPopup(response.error);
+        return;
+    }
+
+    if (!userResult.rows || userResult.rows.length === 0) {
+        showPopup("No se encontró el usuario registrado.");
+        return;
+    }
+
+    const userId = userResult.rows[0][0];
+
+    for (const conditionId of selectedConditions) {
+        await assignUserCondition(userId, conditionId);
+    }
+
+    // Auto-login después de registrar
+    try {
+        const autoLoginData = await autoLogin(userData.email);
+    } catch (error) {
+        showPopup(error.message);
+        return;
+    }
+
+    // 📌 Guardar usuario en sessionStorage con nomenclatura correcta
+    sessionStorage.setItem("user", JSON.stringify({
+        userId: userId,
+        email: userData.email,
+        firstName: userData.first_name,
+        lastName: userData.last_name,
+        birthDate: userData.birth_date,
+        city: userData.city,
+        district: userData.district,
+        street: userData.street,
+        streetNumber: userData.street_number,
+        mobilePhone: userData.mobile_phone,
+        additionalInfo: userData.additional_address_info,
+        active: userData.active,
+        userRole: userData.user_role,
+        googleAuth: emailFromURL ? true : undefined // 📌 Agregar googleAuth solo si el email proviene de la URL
+    }));
+
+    showPopup("Registro exitoso. Serás redirigido a la página principal.");
+        window.location.href = "/";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        getEmailFromURL();
+        loadConditions();
+        document.getElementById("register-btn").addEventListener("click", registerUser);
+    });
+    </script>
+    <script src="/js/validation.js"></script>
+</body>
+</html>

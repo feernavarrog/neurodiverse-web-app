@@ -1,0 +1,162 @@
+<div id="cart-overlay">
+    <aside id="cart">
+      <div class="sidebar-header">
+        <h3>Carrito</h3>
+        <button id="close-cart" class="btn-close">✖</button>
+      </div>
+  
+      <div id="cart-items">
+        <!-- Productos cargados dinámicamente -->
+      </div>
+  
+      <p>Total: <span id="cart-total">$0</span></p>
+      <button id="checkout" onclick="goToCheckout()">Continuar Checkout</button>
+    </aside>
+  </div>
+  <div id="overlay" class="overlay"></div>
+  
+<script>
+    // Función para actualizar el carrito en la vista
+    function updateCart() {
+        let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+        let cartContainer = document.getElementById('cart-items');
+        let totalContainer = document.getElementById('cart-total');
+        cartContainer.innerHTML = "";
+        let total = 0;
+
+        cart.forEach(product => {
+            let productElement = document.createElement('div');
+            productElement.classList.add('cart-item'); // Clase para asegurar el diseño uniforme
+
+            productElement.innerHTML = `
+                <img src="${product.image}" alt="${product.name}">
+                <div class="product-info">
+                    <p class="product-name">${product.name}</p>
+                    <div class="product-details">
+                        <select class="quantity-selector" data-code="${product.code}">
+                            ${[1, 2, 3, 4, 5, 6].map(num => `
+                                <option value="${num}" ${product.quantity == num ? 'selected' : ''}>${num}</option>
+                            `).join('')}
+                        </select>
+                        <p class="product-price">${product.price}</p>
+                    </div>
+                </div>
+                <button class="remove-item" data-code="${product.code}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            cartContainer.appendChild(productElement);
+            total += cleanAndConvertCLP(product.price) * product.quantity;
+        });
+
+        totalContainer.innerText = `${formatCLP(total)}`;
+
+        // Asignar eventos a los botones de eliminar
+        document.querySelectorAll('.remove-item').forEach(button => {
+            button.addEventListener('click', function() {
+                removeFromCart(this.getAttribute('data-code'));
+            });
+        });
+
+        // Asignar eventos a los selectores de cantidad
+        document.querySelectorAll('.quantity-selector').forEach(select => {
+            select.addEventListener('change', function() {
+                updateQuantity(this.getAttribute('data-code'), this.value);
+            });
+        });
+    }
+
+    function addToCart() {
+      let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+
+      // Obtener la ID del producto desde el botón
+      let productId = event.target.getAttribute("data-id");
+
+      // Obtener los datos actuales del producto desde el DOM
+      const productData = {
+          id: productId, // Agregar la ID del producto
+          name: document.getElementById('item-name').innerText,
+          image: document.getElementById('item-image').src,
+          description: document.getElementById('item-description').innerText,
+          code: document.getElementById('item-code').innerText,
+          price: document.getElementById('item-price').innerText,
+          quantity: 1 // Se agrega con cantidad inicial de 1
+      };
+
+        // Verificar si el producto ya está en el carrito
+        let existingProduct = cart.find(product => product.code === productData.code);
+            if (existingProduct) {
+                // Mostrar el popup si el producto ya está en el carrito
+                showPopup("Este producto ya está en el carrito. Puedes modificar su cantidad desde allí.");
+            } else {
+                // Si no está en el carrito, agregar el producto
+                cart.push(productData);
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                console.log("Producto agregado al carrito:", productData);
+                updateCart();
+            }
+        }
+    // Función para actualizar la cantidad de un producto en el carrito
+    function updateQuantity(productCode, newQuantity) {
+        let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+        cart = cart.map(product => {
+            if (product.code === productCode) {
+                product.quantity = parseInt(newQuantity, 10);
+            }
+            return product;
+        });
+        sessionStorage.setItem('cart', JSON.stringify(cart));
+        updateCart();
+    }
+
+    // Función para eliminar un producto del carrito
+    function removeFromCart(productCode) {
+        let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+        cart = cart.filter(product => product.code !== productCode);
+        sessionStorage.setItem('cart', JSON.stringify(cart));
+        updateCart();
+    }
+
+    function openCart() {
+    document.getElementById("cart").classList.add("show-cart");
+    document.getElementById("cart-overlay").classList.add("show-overlay");
+}
+
+// Cerrar el carrito y ocultar el overlay
+function closeCart() {
+    document.getElementById("cart").classList.remove("show-cart");
+    document.getElementById("cart-overlay").classList.remove("show-overlay");
+}
+
+// ir al checkout
+function goToCheckout() {
+    // Obtener el rol del usuario desde sessionStorage
+    let user = JSON.parse(sessionStorage.getItem('user')) || {};
+    let cart = JSON.parse(sessionStorage.getItem('cart')) || [];
+
+    // Validaciones para el checkout
+    if (user.role === "admin") { // Verificar si el usuario es admin
+        showPopup("⚠️ Debes iniciar sesión como cliente para procesar una orden.");
+        return;
+    } else if (cart.length === 0) { // Verificar si el carrito está vacío
+        showPopup("El carrito está vacío. Agrega productos antes de continuar.");
+        return;
+    } else if (!user || !user.userId) { // Verificar si el usuario está autenticado
+        showPopup("⚠️ Debes ingresar con tu cuenta para procesar una orden.");
+        return;
+    } else {
+        // redirigir al checkout
+        window.location.href = "/checkout";
+    }
+}
+
+// Cerrar el carrito al hacer clic fuera de él
+document.getElementById("cart-overlay").addEventListener("click", (event) => {
+    if (event.target === document.getElementById("cart-overlay")) {
+        closeCart();
+    }
+});
+
+    // Cargar el carrito al cargar la vista
+    document.addEventListener("DOMContentLoaded", updateCart);
+</script>

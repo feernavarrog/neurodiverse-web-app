@@ -1,0 +1,106 @@
+<!-- views/account.ejs (Versión sin estilos) -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - NeuroDiverse</title>
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/homestyle.css" />
+  <link rel="stylesheet" href="/css/item.css" />
+  <link rel="stylesheet" href="/css/products.css" />
+  <link rel="stylesheet" href="/css/account.css" />
+  <link rel="stylesheet" href="/css/popupstyles.css" />
+</head>
+<body>
+    <%- include('partials/first-nav') %>
+    <%- include('partials/navbar') %>
+    <%- include('partials/sidebar') %>
+    <%- include('partials/cart') %>
+    <%- include('partials/login-modal') %>
+    <%- include('partials/popups') %>
+    
+    <!-- Contenido principal -->
+    <main>
+        <!-- Banner de usuario -->
+        <div id="account-banner">
+            <img src="/img/banneruser.png" alt="Banner de Usuario">
+            <p id="welcome-message">BIENVENIDO/A [NOMBRE USUARIO]</p>
+        </div>
+        
+        <hr>
+        
+        <ul class="account-menu">
+            <li><a href="/orders">🛒 Pedidos</a></li>
+            <li><a href="/account-settings">🔧 Configuración de la cuenta</a></li>
+            <li><a href="#" id="logout">❌ Cerrar sesión</a></li>
+            <li><a href="#" id="delete-account">⚠️ Eliminar cuenta</a></li>
+        </ul>
+        
+    </main>
+    
+    
+    <%- include('partials/footer') %>
+    <script src="/js/popup.js"></script>
+    <script src="/js/crudManager.js"></script>
+    <script src="/js/authManager.js"></script>
+    <script src="/js/global.js"></script>
+    <script>
+        // Función para poblar el nombre del usuario desde sessionStorage
+        function loadUserName() {
+            let user = JSON.parse(sessionStorage.getItem('user')) || {};
+            let userName = user.firstName || "Usuario"; // Nombre de prueba si no existe
+            document.getElementById('welcome-message').innerText = `BIENVENIDO/A ${userName.toUpperCase()}`;
+        }
+
+        // Función para eliminar cuenta de usuario
+        async function deleteAccount() {
+            let user = JSON.parse(sessionStorage.getItem('user')) || {};
+            let userId = user.userId;
+
+            if (!userId) {
+                showPopup("⚠️ No se pudo identificar al usuario.");
+                return;
+            }
+
+            const confirmDelete = confirm("¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.");
+            if (!confirmDelete) return;
+
+            try {
+                const response = await fetch(`/users/delete/${userId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    showPopup("✅ Cuenta eliminada correctamente.");
+                    sessionStorage.removeItem('user');
+                    window.location.href = "/";
+                } else {
+                    throw new Error(result.error || "Error al eliminar la cuenta.");
+                }
+            } catch (error) {
+                console.error("⚠️ Error al eliminar cuenta:", error);
+                showPopup("⚠️ Hubo un error al eliminar la cuenta. Inténtalo nuevamente.");
+            }
+        }
+        
+        // Ejecutar la función al cargar la vista
+        document.addEventListener("DOMContentLoaded", function() {
+            loadUserName();
+            document.getElementById("logout").addEventListener("click", logoutUser);
+            document.getElementById("delete-account").addEventListener("click", deleteAccount);
+        });
+    </script>
+</body>
+</html>
+

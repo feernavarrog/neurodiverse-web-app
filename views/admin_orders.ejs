@@ -1,0 +1,234 @@
+<!-- views/admin_orders.ejs -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Pedidos - NeuroDiverse</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js">
+</script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link rel="stylesheet" href="/css/homestyle.css" />
+    <link rel="stylesheet" href="/css/admin_orders.css" />
+    <link rel="stylesheet" href="/css/popupstyles.css" />
+</head>
+<body>
+    
+    <%- include('partials/navbar') %>
+    <%- include('partials/sidebar') %>
+    <%- include('partials/cart') %>
+    <%- include('partials/login-modal') %>
+    <%- include('partials/popups') %>
+    
+    <!-- Contenido principal -->
+    <main>
+        <div class="admin-header">
+            <h2>Administración de Pedidos</h2>
+            <p>Aquí puedes gestionar los pedidos de los clientes.</p>
+            <hr>
+        </div>
+        
+        <!-- Dropdown para seleccionar estado del pedido -->
+        <label for="order-status" class="form-label">Filtrar por estado:</label>
+        <select id="order-status" class="form-select" onchange="handleFilterChange(this.value)">
+            <option value="all">Todos</option>
+            <option value="pendiente">pendiente</option>
+            <option value="enviado">enviado</option>
+            <option value="entregado">entregado</option>
+            <option value="cancelado">cancelado</option>
+        </select>
+        <hr>
+        
+        <!-- Tabla de Órdenes -->
+        <legend>Gestión de Órdenes</legend>
+        <table id="admin-orders-table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha de Orden</th>
+                    <th>RUT Usuario</th>
+                    <th>Últimos 4 Dígitos Tarjeta</th>
+                    <th>Subtotal</th>
+                    <th>Total</th>
+                    <th>Dirección de Envío</th>
+                    <th>Productos</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody">
+                <!-- Las órdenes se insertarán aquí dinámicamente -->
+            </tbody>
+        </table>
+        
+    </main>
+    
+    <%- include('partials/footer') %>
+    <script src="/js/crudManager.js"></script>
+    <script src="/js/global.js"></script>
+    <script src="/js/popup.js"></script>
+    <script>
+        let currentOrderStatusFilter = 'all'; // Se inicia mostrando todos
+
+        function handleFilterChange(status) {
+            currentOrderStatusFilter = status;
+            loadOrders(currentOrderStatusFilter);
+        }
+
+        async function loadOrders(filterStatus = 'all') {
+            const response = await fetchOrders(filterStatus !== 'all' ? { column: 'status', value: filterStatus } : {});
+            console.log("Respuesta de fetchOrders:", response);
+            
+            const orders = response.rows || [];
+            const tableBody = document.getElementById('orderTableBody');
+            tableBody.innerHTML = '';
+            
+            for (const order of orders) {
+                const formattedDate = formatDate(order[7]);
+                const products = await fetchOrderProducts(order[0]);
+                let productList = "";
+                
+                if (products.rows.length > 0) {
+                    products.rows.forEach(product => {
+                        productList += `<div>
+                            <img src="/product-images/${product[7]}" style="max-width: 50px; max-height: 50px;" alt="Producto">
+                            Código: ${product[1]} - Nombre: ${product[2]} - Cantidad: ${product[12]}
+                        </div>`;
+                    });
+                } else {
+                    productList = "Sin productos";
+                }
+    
+                const actionButtons = [];
+                
+                if (order[4] === 'pendiente') {
+                    actionButtons.push(`<button class='btn btn-warning btn-sm' onclick="updateOrderState(${order[0]}, ${order[1]}, '${order[2]}', ${order[3]}, '${order[4]}', '${order[5]}', ${order[6]}, '${formatDateInput(order[7])}', ${order[8]})">Enviar Orden 🚚</button>`);
+                } else if (order[4] === 'enviado') {
+                    actionButtons.push(`<button class='btn btn-success btn-sm' onclick="updateOrderState(${order[0]}, ${order[1]}, '${order[2]}', ${order[3]}, '${order[4]}', '${order[5]}', ${order[6]}, '${formatDateInput(order[7])}', ${order[8]})">Pedido Entregado ✅</button>`);
+                }
+                
+                if (order[4] !== 'cancelado' && order[4] !== 'entregado') {
+                    actionButtons.push(`<button class='btn btn-danger btn-sm' onclick="cancelOrder(${order[0]}, ${order[1]}, '${order[2]}', ${order[3]}, '${order[4]}', '${order[5]}', ${order[6]}, '${formatDateInput(order[7])}', ${order[8]})">Cancelar Orden ❌</button>`);
+                }
+                
+                const row = `<tr>
+                    <td>${formattedDate}</td>
+                    <td>${formatRUT(order[9])}</td>
+                    <td>${order[5]}</td>
+                    <td>${formatCLP(order[1])}</td>
+                    <td>${formatCLP(order[3])}</td>
+                    <td>${order[2]}</td>
+                    <td>${productList}</td>
+                    <td class='estado-${order[4]}'>${order[4]}</td>
+                    <td>${actionButtons.join(' ')}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            }
+        }
+      function getNextOrderState(currentState) {
+            switch (currentState) {
+                case 'pendiente': return 'enviado';
+                case 'enviado': return 'entregado';
+                default: return currentState;
+            }
+        }
+
+        async function updateOrderState(orderId, subtotal, shippingAddress, total, status, cardLastFour, userId, orderDate, active) {
+            const newState = getNextOrderState(status);
+            console.log(`Actualizando orden ${orderId}: ${status} → ${newState}`);
+            
+            const order = {
+                order_id: orderId,
+                subtotal,
+                shipping_address: shippingAddress,
+                total,
+                status: newState,
+                card_last_four: cardLastFour,
+                user_id: userId,
+                order_date: orderDate,
+                active
+            };
+            
+            await updateOrder(order);
+            loadOrders(currentOrderStatusFilter); // usa el filtro actual
+        }
+
+       // Función para cancelar una orden
+async function cancelOrder(orderId, subtotal, shippingAddress, total, status, cardLastFour, userId, orderDate, active) {
+    // Mostrar el popup de confirmación
+    showPopup({
+        message: `¿Estás seguro de que deseas cancelar la orden #${orderId}?`,
+        onConfirm: async () => {
+            console.log(`Cancelando orden ${orderId}`);
+            
+            // Crear el objeto de la orden
+            const order = {
+                order_id: orderId,
+                subtotal,
+                shipping_address: shippingAddress,
+                total,
+                status: 'cancelado',
+                card_last_four: cardLastFour,
+                user_id: userId,
+                order_date: orderDate,
+                active
+            };
+            
+            // Actualizar la orden en el servidor
+            await updateOrder(order);
+            
+            // Recargar las órdenes con el filtro actual
+            loadOrders(currentOrderStatusFilter); // usa el filtro actual
+        },
+        onCancel: () => {
+            console.log("Cancelación abortada");
+        }
+    });
+}
+
+// Función para mostrar el popup con un mensaje dinámico y los botones de confirmación
+function showPopup({ message, onConfirm, onCancel }) {
+    // Asignamos el mensaje dinámico al contenido del popup
+    document.getElementById('popupMessageContent').innerHTML = `<p>${message}</p>`;
+
+    // Crear los botones de acción para confirmar o cancelar
+    document.getElementById('popupButtons').innerHTML = `
+        <button id="confirmBtn">Sí, cancelar</button>
+        <button id="cancelBtn">No, volver</button>
+    `;
+
+    // Asignar los eventos a los botones
+    document.getElementById('confirmBtn').onclick = () => {
+        onConfirm();  // Llamar a la función de confirmación
+        closePopup(); // Cerrar el popup
+    };
+
+    document.getElementById('cancelBtn').onclick = () => {
+        onCancel();  // Llamar a la función de cancelación
+        closePopup(); // Cerrar el popup
+    };
+
+    // Mostrar el popup
+    document.getElementById('globalPopup').style.display = 'block';
+}
+
+// Función para cerrar el popup
+function closePopup() {
+    document.getElementById('globalPopup').style.display = 'none';
+}
+
+      
+      document.addEventListener('DOMContentLoaded', function() {
+      loadOrders();
+    });
+    </script>
+</body>
+</html>

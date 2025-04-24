@@ -1,0 +1,166 @@
+<!-- test_order.ejs -->
+
+<fieldset>
+    <legend>Gestión de Órdenes</legend>
+    
+    <!-- Tabla de Órdenes -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Subtotal</th>
+                <th>Dirección de Envío</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Últimos 4 dígitos de la tarjeta</th>
+                <th>ID Usuario</th>
+                <th>Fecha de Orden</th>
+                <th>Activo</th>
+                <th>Productos</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="orderTableBody">
+            <!-- Las órdenes se insertarán aquí dinámicamente -->
+        </tbody>
+    </table>
+    <button onclick="loadOrders()">Cargar Órdenes</button>
+
+    <!-- Formulario de Orden -->
+    <fieldset>
+        <legend>Formulario de Orden</legend>
+        <label>ID:</label> <input type="text" id="orderIdInput" disabled><br>
+        <label>Subtotal:</label> <input type="number" id="orderSubtotalInput"><br>
+        <label>Dirección de Envío:</label> <input type="text" id="orderShippingAddressInput"><br>
+        <label>Total:</label> <input type="number" id="orderTotalInput"><br>
+        <label>Estado:</label> 
+        <select id="orderStatusInput">
+            <option value="pendiente">Pendiente</option>
+            <option value="enviado">Enviado</option>
+            <option value="entregado">Entregado</option>
+            <option value="cancelado">Cancelado</option>
+        </select><br>
+        <label>Últimos 4 dígitos de la tarjeta:</label> <input type="text" id="orderCardLastFourInput"><br>
+        <label>ID Usuario:</label> <input type="number" id="orderUserIdInput"><br>
+        <label>Fecha de Orden:</label> <input type="date" id="orderDateInput"><br>
+        <label>Activo:</label> <input type="checkbox" id="orderActiveInput"><br>
+        <button onclick="saveOrder()">Guardar Orden</button>
+    </fieldset>
+    
+    <!-- Asignación de Productos a Orden -->
+    <fieldset>
+        <legend>Asignar Producto a Orden</legend>
+        <label>ID Orden:</label> <input type="number" id="assignOrderIdInput"><br>
+        <label>ID Producto:</label> <input type="number" id="assignProductIdInput"><br>
+        <label>Cantidad:</label> <input type="number" id="assignProductQuantityInput"><br>
+        <button onclick="assignProductToOrder()">Asignar Producto</button>
+    </fieldset>
+</fieldset>
+
+<script>
+    async function loadOrders() {
+        const response = await fetchOrders();
+        console.log("Respuesta de fetchOrders:", response);
+        
+        const orders = response.rows || [];
+        const tableBody = document.getElementById('orderTableBody');
+        tableBody.innerHTML = '';
+        
+        for (const order of orders) {
+            const formattedDate = formatDate(order[7]);
+            const products = await fetchOrderProducts(order[0]);
+            let productList = "";
+            
+            if (products.rows.length > 0) {
+                products.rows.forEach(product => {
+                    productList += `<div>
+                        <img src="/product-images/${product[7]}" style="max-width: 50px; max-height: 50px;" alt="Producto">
+                        ID: ${product[0]} - Código: ${product[1]} - Nombre: ${product[2]}
+                        <button onclick='removeProductFromOrder(${order[0]}, ${product[0]})'>Quitar</button>
+                    </div>`;
+                });
+            } else {
+                productList = "Sin productos";
+            }
+
+            const row = `<tr>
+                <td>${order[0]}</td>
+                <td>${order[1]}</td>
+                <td>${order[2]}</td>
+                <td>${order[3]}</td>
+                <td>${order[4]}</td>
+                <td>${order[5]}</td>
+                <td>${order[6]}</td>
+                <td>${formattedDate}</td>
+                <td>${order[8] === 1 ? 'Sí' : 'No'}</td>
+                <td>${productList}</td>
+                <td>
+                    <button onclick="editOrder(${order[0]}, ${order[1]}, '${order[2]}', ${order[3]}, '${order[4]}', '${order[5]}', ${order[6]}, '${formatDateInput(order[7])}', ${order[8]})">Editar</button>
+                    <button onclick="deleteOrder(${order[0]})">Eliminar</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        }
+    }
+
+    function editOrder(id, subtotal, shippingAddress, total, status, cardLastFour, userId, orderDate, active) {
+        document.getElementById('orderIdInput').value = id;
+        document.getElementById('orderSubtotalInput').value = subtotal;
+        document.getElementById('orderShippingAddressInput').value = shippingAddress;
+        document.getElementById('orderTotalInput').value = total;
+        document.getElementById('orderStatusInput').value = status;
+        document.getElementById('orderCardLastFourInput').value = cardLastFour;
+        document.getElementById('orderUserIdInput').value = userId;
+        document.getElementById('orderDateInput').value = orderDate;
+        document.getElementById('orderDateInput').disabled = false;
+        document.getElementById('orderActiveInput').checked = active === 1;
+    }
+
+    async function saveOrder() {
+        const orderId = document.getElementById('orderIdInput').value;
+        const order = {
+            order_id: orderId || null,
+            subtotal: document.getElementById('orderSubtotalInput').value,
+            shipping_address: document.getElementById('orderShippingAddressInput').value,
+            total: document.getElementById('orderTotalInput').value,
+            status: document.getElementById('orderStatusInput').value,
+            card_last_four: document.getElementById('orderCardLastFourInput').value,
+            user_id: document.getElementById('orderUserIdInput').value,
+            order_date: orderId ? document.getElementById('orderDateInput').value : null,
+            active: document.getElementById('orderActiveInput').checked ? 1 : 0
+        };
+        
+        if (order.order_id) {
+            await updateOrder(order);
+        } else {
+            await createOrder(order);
+        }
+        
+        showPopup("Orden guardada correctamente.");
+        loadOrders();
+    }
+
+    async function assignProductToOrder() {
+        const orderId = document.getElementById('assignOrderIdInput').value;
+        const productId = document.getElementById('assignProductIdInput').value;
+        const quantity = document.getElementById('assignProductQuantityInput').value;
+        if (!orderId || !productId) {
+            showPopup("Debe ingresar el ID de la orden y el ID del producto.");
+            return;
+        }
+        await addProductToOrder(orderId, productId, quantity);
+        showPopup("Producto asignado correctamente.");
+        loadOrders();
+    }
+
+    async function removeProductFromOrder(orderId, productId) {
+        if (!confirm("¿Estás seguro de que deseas quitar este producto de la orden?")) return;
+        await fetch('/orders/remove-product', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId, productId })
+        });
+        showPopup("Producto eliminado de la orden.");
+        loadOrders();
+    }
+</script>
