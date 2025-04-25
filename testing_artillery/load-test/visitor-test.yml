@@ -1,0 +1,101 @@
+#? ARTILLERY - HERRAMIENTA DE PRUEBAS DE CARGA (Simula varops usuarios virtuales que hacen peticiones para probar el rendimiento de la aplicación)
+
+#? Hacer correr artillery >>>>>>>          npm run test:visitor
+
+# ESTE TEST ES CON LA SESION DE UN USUARIO NORMAL INICIADA HACIENDO SOLICITUDES
+#! No cargamos más usuarios porque tenemos que tener esa cantidad, este test en este momento no sirve 
+#! 🛑 NO borrar a usuario test_artillery@neurodiverse.cl porque se usa acá
+
+config:
+  target: "http://localhost:3000" 
+
+scenarios:
+  # Escenario 1: Inicio de sesión y captura de sesión del usuario normal ✅
+  - name: "Login and capture session"
+    flow:
+      - post:
+          url: "/users/auth/login" # Endpoint para el login
+          json:
+            email: "test_artillery@neurodiverse.cl"
+            password: "Aaaaaaaaaa1122#"
+          capture:
+            - header: "set-cookie" # Captura la cookie de sesión
+              as: sessionCookie
+
+  # Escenario 2: Navegación autenticada 
+  - name: "Authenticated user navigation"
+    flow:
+      # página de inicio
+      - get:
+          url: "/"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          tags:
+            name: "home"
+      - think: 1 # Espera 1 segundo antes de la siguiente operación
+
+      # página de un producto específico
+      - get:
+          url: "/item"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          tags:
+            name: "item"
+      - think: 1
+
+      # página de productos
+      - get:
+          url: "/products"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          tags:
+            name: "products"
+      - think: 1
+
+      # página de checkout
+      - get:
+          url: "/checkout"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          tags:
+            name: "checkout"
+      - think: 1
+
+      # página de la cuenta
+      - get:
+          url: "/account"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          tags:
+            name: "account"
+      - think: 1
+
+      # página de órdenes del usuario
+      - get:
+          url: "/orders"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          tags:
+            name: "orders"
+      - think: 1
+
+      # página de configuración de la cuenta
+      - get:
+          url: "/account-settings"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          tags:
+            name: "account-settings"
+      - think: 1
+
+      # página de registro
+      - get:
+          url: "/register"
+          headers:
+            Cookie: "{{ sessionCookie }}"
+          tags:
+            name: "register"
+      - think: 1
+
+
+#? Hacer correr artillery >>>>>>>          npm run test:visitor
