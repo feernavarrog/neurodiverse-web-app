@@ -44,11 +44,11 @@ html, body {
     justify-content: center;
     align-items: center; 
     height: 100vh; 
-    margin-top: -205px;
-    margin-bottom: 300px;
+    margin-top: -135px;
+    margin-bottom: 200px;
 }
 
 .image-center img {
-    width: 1600px;  
+    width: 1200px;  
     height: auto;  
 }
