@@ -1,0 +1,133 @@
+#* ARTILLERY - HERRAMIENTA DE PRUEBAS DE CARGA (Simula varops usuarios virtuales que hacen peticiones para probar el rendimiento de la aplicación)
+
+#? Hacer correr artillery >>>>>>>          npm run test:unauthenticated
+
+#ESTO ES UN TEST GENERAL DE CARGA SIN LOGEARSE (RUTAS ACEPTADAS SIN LOGIN)
+#? 📄El resultado se ve en consola y tambien quedan guardados en results-unauthenticated.json, en esta misma carpeta
+
+#1.-CONFIGURACION DE TARGET (servidor local) Y PROCESOR (archivo processor.js que no se esta usando)
+config:
+  target: "http://localhost:3000" # URL de tu servidor local que se está probando (los endpoint se ejecutan en ésta)
+  processor: "../processor.js"  #! Referencia al archivo processor.js donde generamos los datos dinámicos, no se está usando, se puede quitar esta linea
+
+#2.- CONFIGURA LOS REQUISITOS GENERALES DE LA PRUEBA
+
+  phases: #se va a realizar en 4 fases
+    
+    # ✅ Fase 1: 10 segundos, carga ligera 10 usuarios virtuales por segundo
+    - duration: 10 # ⏱️ Duración de la fase (en segundos)
+      arrivalRate: 10 # Número de usuarios virtuales enviados al punto final (x segundo)
+      name: "Warming up" # se llama asi por convencion a la fase inicial donde se envia una cantidad menor de solicitudes (antes de que comience la carga mas fuerte) 
+    #Ejemplo: manda durante 5 segundos 10 usuarios virtuales por segundo, en total 50 usuarios virtuales (10*5=50) y luego pasa a la siguiente fase
+
+    # ✅ Fase 2: 20 segundos, carga media 50 usuarios virtuales por segundo
+    - duration: 20 
+      arrivalRate: 10 # Parte con 10 usuario p/segundo
+      rampTo: 50 # Aumenta gradualmente el número de usuarios virtuales hasta llegar a 50
+      name: "Ramping up" # se llama asi por convencion a la fase donde se aumenta gradualmente el número de usuarios virtuales hasta llegar a 50, para simular una carga creciente
+
+    # ✅ Fase 3: 50 segundos, carga máxima 100 usuarios virtuales por segundo
+    - duration: 50
+      arrivalRate: 50 
+      name: "Sustained max load" # se llama asi por convencion a la fase donde se mantiene la carga máxima
+
+    # 🐞 Fase 4: Spike load (carga repentina) 100 usuarios virtuales por segundo
+    - duration: 15
+      arrivalRate: 100 
+      name: "Spike load" # se llama asi por convencion a la fase donde se aumenta la carga de forma repentina, para simular un aumento brusco 
+  
+#OPERACONES QUE VA A REALIZAR CADA USUARIOS VIRTUAL EN ESOS TIEMPOS
+
+#*PRUEBA GENERAL DE CARGA SIN LOGEARSE
+
+scenarios:
+
+  - name: "General test" # Nombre del escenario de prueba
+    flow: # Flujo de operaciones que se realizarán en el escenario de prueba
+      
+      #- log: "▶️ Inicio de la prueba: Página de inicio"
+
+      #1.- El usuario virtual realiza una solicitud GET a la página de inicio ✅
+      - get:
+          url: "/"
+          tags: # Para ponerle un nombre a la operación, separar los resultados por URL e identificar más fácil donde hay un 404 o algo
+            name: "home"
+      - think: 1 # Tiempo de espera en segundos antes de la siguiente operación
+      
+      #- log: "🐞 Probando la página de categoría de productos sin ID"
+      
+      #2.1- Página de precios ✅
+      - get:
+          url: "/products"
+          tags:
+            name: "products"
+      - think: 2
+
+      #- log: "🐞 Probando la página de categoría de productos con una ID"
+
+      #2.2- Página de precios ✅
+      - get:
+          url: "/products?category=2"
+          tags:
+            name: "products"
+      - think: 2
+      
+      #- log: "🐞 Probando la página de un producto sin pasar la ID"
+
+      #3.1- Página de un producto sin pasar el ID del producto ✅
+      - get:
+          url: "/item"  
+          tags:
+            name: "item"
+      - think: 2
+      
+      #- log: "🐞 Probando la página de un producto con su ID incluida"
+
+      #3.2- Página de un producto con el ID del producto ✅
+      - get:
+          url: "/item?code=PROD002" 
+          tags:
+            name: "Audífonos con cancelación de ruido"
+      - think: 2
+
+      #- log: "⏸️ Fin de la prueba general"
+
+
+
+#? Hacer correr artillery >>>>>>>          npm run test:unauthenticated
+
+
+
+#? ⭐ COMO INTERPRETAR LOS RESULTADOS DE ARTILLERY 
+#?⠀⠀⠀⠀⠀⠀⢀⣠⣤⣶⣶⡞⡀⣤⣬⣴⠀⠀⢳⣶⣶⣤⣄⡀⠀⠀⠀⠀⠀⠀
+#?⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⡇⠀⢸⣿⠿⣿⡇⠀⠀⠸⣿⣿⣿⣿⣷⣦⡀⠀⠀⠀
+#?⠀⠀⢠⡾⣫⣿⣻⣿⣽⣿⡇⠀⠈⢿⣧⡝⠟⠀⠀⢸⣿⣿⣿⣿⣿⣟⢷⣄⠀⠀
+#?⠀⢠⣯⡾⢿⣿⣿⡿⣿⣿⣿⣆⣠⣶⣿⣿⣷⣄⣰⣿⣿⣿⣿⣿⣿⣿⢷⣽⣄⠀
+#?⢠⣿⢋⠴⠋⣽⠋⡸⢱⣯⡿⣿⠏⣡⣿⣽⡏⠹⣿⣿⣿⡎⢣⠙⢿⡙⠳⡙⢿⠄
+#?⣰⢣⣃⠀⠊⠀⠀⠁⠘⠏⠁⠁⠸⣶⣿⡿⢿⡄⠈⠀⠁⠃⠈⠂⠀⠑⠠⣈⡈⣧
+#?⡏⡘⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⡥⢄⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢳⢸
+#?⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣄⣸⠟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢨
+#?⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡴⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈
+#!⠀⠀⠀⠀⠀⠀⠀⣄⣄⣄⠀⠀⠀⡳⣶⣄⣄⣄⡀⠀⠀⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+
+#Mensajes en consola:
+
+#* Phase ("Phase started:): cada una tiene un nombre y duracion, simulan diferentes "etapas" donde puedes envias usuarios por ejemplo, primera etapa partes con menos y segunda lo subes, las muestra al principio en consola
+    # fase "warning up" nombre de fase inicial donde se envia una cantidad menor de solicitudes, esto porque se recomendaba en la documentacion "calentar" de a poco, antes de que comience la carga mas fuerte
+    # fase "ramping up" nombre de fase donde se aumenta gradualmente el número de usuarios virtuales hasta llegar a 50, para simular una carga creciente
+    # fase "sustained max load" nombre de la fase donde se mantiene la carga máxima, para simular una carga sostenida durante un tiempo prolongado
+    # fase "spike load" nombre de la fase donde se aumenta la carga de forma repentina, para simular un aumento de un paraguazo
+
+#* Metricas que arroja ("Metrics for period to"): Se generan durante cada fase y son el resumen de como rindio la aplicacion, los muestra abajo de las fases en consola
+    # http.code.200: son las respuestas exitosas, las que no tienen error (estas deberian aparecer)
+    # http.code.302: son redireccion por ruta protegida lo cual es bueno porque el usuario no está logeado en las pruebas (tambien deberian aparecer)
+    # http.code.404: respuestas que no se encontraron, las que no existen, por ejemplo si el usuario virtual intenta acceder a una ruta que no existe o no tiene permisos para acceder a ella (no deberian haber muchas)
+    # http.code.500: son errores del servidor, por ejemplo si el servidor no puede procesar la solicitud por alguna razon (no deberian pasar)
+    # errors.ECONNREFUSED: son errores de conexion, por ejemplo si el servidor no responde o no se puede conectar a la base de datos 
+    # errors.ETIMEDOUT: son errores de tiempo de espera, por ejemplo si el servidor no responde en un tiempo razonable 
+    # htttp.download bytes: son los bytes que se descargaron durante la prueba
+    # http.request rates: es la tasa de solicitudes por segundo que los usuarios estan enviando, por ejemplo "esta recibiendo 100 solicitudes por segundo"
+    # http.requests: es el numero total de solicitudes HTTP que se enviaron al servidor en el periodo, por ejemplo "se enviaron 6000 solicitudes al servidor durante la prueba" 
+    # http.response time: es el tiempo entre que hace la solicitud y el server responde, es un promedio de todas las solicitudes durante la fase, muestra hasta estadisticas de percentil95(p95) y percentil99(p99) (segun Google el tiempo optimo es menos de 200ms)
+
+#* Resumen ("Summary report"): Lo muestra al final y es un resumen de todas las fases usando lo mismo de metrics, es el resultado final de la prueba de carga, lo muestra al final en la consola
