@@ -127,10 +127,10 @@
                 <p id="authorization-error" class="error-message"></p>
             </div>
 
-            <!-- 🔹 Sección: Patologías -->
-            <h3 class="registro-subtitulo">Patologías</h3>
+            <!-- 🔹 Sección: Condiciones Clinicas -->
+            <h3 class="registro-subtitulo">Condiciones Clínicas</h3>
             <div id="conditions-container">
-                <!-- Las patologías se cargarán dinámicamente -->
+                <!-- Las Condiciones Clinicas se cargarán dinámicamente -->
             </div>
 
             <button id="register-btn" class="registro-boton">Registrarse</button>
@@ -166,7 +166,7 @@
         }
     }
 
-    // 🔹 Cargar patologías desde la base de datos usando crudManager
+    // 🔹 Cargar Condiciones clinicas desde la base de datos usando crudManager
     async function loadConditions() {
         const conditionsContainer = document.getElementById("conditions-container");
         
